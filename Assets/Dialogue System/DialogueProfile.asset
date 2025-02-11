@@ -13,69 +13,206 @@ MonoBehaviour:
   m_Name: DialogueProfile
   m_EditorClassIdentifier: 
   actions:
-  - name: "\u64CD\u4F60\u5988\u903C"
-    dialogue: "\u5F53\u524D\u4E0A\u4E0B\u6587\u4E2D\u4E0D\u5B58\u5728\u540D\u79F0\u201Cposition\u201D"
-    audio: {fileID: 8300000, guid: 788bf5d99e637684194bfafee676afeb, type: 3}
-    backGround: {fileID: 21300000, guid: 8e88a66fe4074c340bd52e2ec881ddcb, type: 3}
+  - name: Jenny
+    dialogue: Hello!
+    audio: {fileID: 8300000, guid: 0ea950c1ca107eb46a716dc7f76a5c4a, type: 3}
+    backGround: {fileID: 21300000, guid: 3a9afca971d5f5a47b794047ac9315e3, type: 3}
+    bg_Music: {fileID: 8300000, guid: 8003f463b44be4b4181c075607fe84cd, type: 3}
     environmentSettings: 0
-    imageOptions:
+    characterOptions:
     - characterDefindID: 0
-      characterImage: {fileID: 21300000, guid: 8bf146d2155e32c438b8e086d4dfea66, type: 3}
-      motionMode: 2
-      behaviourMode: 0
+      characterImage: {fileID: -1843948160, guid: a42c522a4972b864b9b7656d9b3856f5, type: 3}
+      motionMode: 7
+      behaviourMode: 1
       action_Duration: 0.6
-      action_Ease: 4
+      action_Ease: 0
       useOrigin: 0
       origin: {x: 0, y: 0}
       appointedPosition: {x: 0, y: 0}
-      ArrangeByListOrder: 0
-      CustomOrder: 1
-    - characterDefindID: 1
-      characterImage: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
-      motionMode: 1
-      behaviourMode: 0
-      action_Duration: 0.6
-      action_Ease: 4
-      useOrigin: 0
-      origin: {x: 0, y: 0}
-      appointedPosition: {x: 0, y: 0}
-      ArrangeByListOrder: 0
+      ArrangeByListOrder: 1
       CustomOrder: 0
-    TillingCharacters: 0
-  - name: "\u51AC\u65E5winterovo"
-    dialogue: "\u306F\u3058\u3081\u307E\u3057\u3066\u3092\u3000\u7E70\u308A\u8FD4\u3059\r\n\r\n\u53CD\u590D\u4E66\u5199\u7740\u521D\u89C1\r\n\r\n\u30DA\u30FC\u30B8\u3092\u3081\u304F\u3063\u3066\u3044\u304F\r\n"
-    audio: {fileID: 8300000, guid: 788bf5d99e637684194bfafee676afeb, type: 3}
+    - characterDefindID: 1
+      characterImage: {fileID: 21300000, guid: 8bf146d2155e32c438b8e086d4dfea66, type: 3}
+      motionMode: 8
+      behaviourMode: 0
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0
+  - name: Mike
+    dialogue: "Hi\uFF01"
+    audio: {fileID: 8300000, guid: a21fe7de1a992574da973d1ea80c8c76, type: 3}
     backGround: {fileID: 0}
+    bg_Music: {fileID: 0}
     environmentSettings: 0
-    imageOptions:
+    characterOptions:
     - characterDefindID: 0
       characterImage: {fileID: 21300000, guid: e5c693c0118909f498a0176ec220df7f, type: 3}
       motionMode: 0
       behaviourMode: 3
       action_Duration: 0.6
-      action_Ease: 4
+      action_Ease: 0
       useOrigin: 0
       origin: {x: 0, y: 0}
       appointedPosition: {x: 0, y: 0}
       ArrangeByListOrder: 1
       CustomOrder: 0
-    TillingCharacters: 0
-  - name: New Action
-    dialogue: "[00:00.000]\u4F5C\u8BCD : Guiano\r\n[00:01.000]\u4F5C\u66F2 : Guiano\r\n[00:55.162]\u4F55\u3082\u306A\u3044
-      \u3067\u75DB\u3044"
-    audio: {fileID: 0}
-    backGround: {fileID: 0}
-    environmentSettings: 0
-    imageOptions:
-    - characterDefindID: 0
-      characterImage: {fileID: 0}
-      motionMode: 6
-      behaviourMode: 0
+    - characterDefindID: 1
+      characterImage: {fileID: 21300000, guid: e9ea857839436a94789a9e7a0da5eea5, type: 3}
+      motionMode: 0
+      behaviourMode: 4
       action_Duration: 0.6
-      action_Ease: 4
+      action_Ease: 0
       useOrigin: 0
       origin: {x: 0, y: 0}
       appointedPosition: {x: 0, y: 0}
       ArrangeByListOrder: 1
       CustomOrder: 0
-    TillingCharacters: 0
+  - name: Mita
+    dialogue: Nice to meet you
+    audio: {fileID: 8300000, guid: d4f3ed980625bac4193dd6c521da9d59, type: 3}
+    backGround: {fileID: 0}
+    bg_Music: {fileID: 0}
+    environmentSettings: 0
+    characterOptions:
+    - characterDefindID: 0
+      characterImage: {fileID: 21300000, guid: e5c693c0118909f498a0176ec220df7f, type: 3}
+      motionMode: 6
+      behaviourMode: 3
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0
+    - characterDefindID: 1
+      characterImage: {fileID: 21300000, guid: e9ea857839436a94789a9e7a0da5eea5, type: 3}
+      motionMode: 7
+      behaviourMode: 4
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0
+  - name: '                Separator(1);'
+    dialogue: "\u50BB\u903C"
+    audio: {fileID: 8300000, guid: 133d141f4c92bc743862741e741438eb, type: 3}
+    backGround: {fileID: 0}
+    bg_Music: {fileID: 0}
+    environmentSettings: 0
+    characterOptions:
+    - characterDefindID: 0
+      characterImage: {fileID: 21300000, guid: e5c693c0118909f498a0176ec220df7f, type: 3}
+      motionMode: 0
+      behaviourMode: 1
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0
+    - characterDefindID: 1
+      characterImage: {fileID: 21300000, guid: e9ea857839436a94789a9e7a0da5eea5, type: 3}
+      motionMode: 0
+      behaviourMode: 2
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0
+  - name: using System.Collections.Generic;
+    dialogue: "\u50BB\u903C"
+    audio: {fileID: 8300000, guid: 133d141f4c92bc743862741e741438eb, type: 3}
+    backGround: {fileID: 21300000, guid: b1b45472fedda9f41a0e3e3c7a108412, type: 3}
+    bg_Music: {fileID: 0}
+    environmentSettings: 0
+    characterOptions:
+    - characterDefindID: 0
+      characterImage: {fileID: 21300000, guid: e5c693c0118909f498a0176ec220df7f, type: 3}
+      motionMode: 0
+      behaviourMode: 3
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0
+    - characterDefindID: 1
+      characterImage: {fileID: 21300000, guid: e9ea857839436a94789a9e7a0da5eea5, type: 3}
+      motionMode: 0
+      behaviourMode: 4
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0
+  - name: '      '
+    dialogue: nimabi
+    audio: {fileID: 8300000, guid: 0ddb9079958506744826df75c7f0cc22, type: 3}
+    backGround: {fileID: 21300000, guid: 1df7a113bfba7b04db8e5b64e26862ac, type: 3}
+    bg_Music: {fileID: 0}
+    environmentSettings: 0
+    characterOptions:
+    - characterDefindID: 0
+      characterImage: {fileID: 21300000, guid: e5c693c0118909f498a0176ec220df7f, type: 3}
+      motionMode: 5
+      behaviourMode: 3
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0
+    - characterDefindID: 1
+      characterImage: {fileID: 21300000, guid: e9ea857839436a94789a9e7a0da5eea5, type: 3}
+      motionMode: 4
+      behaviourMode: 4
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0
+  - name: '      '
+    dialogue: "\n\u4E02\u4E02\u4E02\u4E02- 2012 TRY OUT PROFESSIONAL -"
+    audio: {fileID: 8300000, guid: 7d84757a7ebe5f64a9681671a1cf237d, type: 3}
+    backGround: {fileID: 21300000, guid: 1df7a113bfba7b04db8e5b64e26862ac, type: 3}
+    bg_Music: {fileID: 0}
+    environmentSettings: 0
+    characterOptions:
+    - characterDefindID: 0
+      characterImage: {fileID: 21300000, guid: e5c693c0118909f498a0176ec220df7f, type: 3}
+      motionMode: 8
+      behaviourMode: 3
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0
+    - characterDefindID: 1
+      characterImage: {fileID: 21300000, guid: e9ea857839436a94789a9e7a0da5eea5, type: 3}
+      motionMode: 7
+      behaviourMode: 4
+      action_Duration: 0.6
+      action_Ease: 0
+      useOrigin: 0
+      origin: {x: 0, y: 0}
+      appointedPosition: {x: 0, y: 0}
+      ArrangeByListOrder: 1
+      CustomOrder: 0

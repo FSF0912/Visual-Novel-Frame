@@ -2,7 +2,8 @@ using DG.Tweening;
 using FSF.Collection;
 using UnityEngine.UI;
 
-namespace FSF.DialogueSystem{
+namespace FSF.VNG
+{
     public class TypeWriter : MonoSingleton<TypeWriter>
     {
         public Text Name, Dialogue;

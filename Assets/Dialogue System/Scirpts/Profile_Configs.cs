@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace FSF.DialogueSystem
+namespace FSF.VNG
 {
     public static class Dialogue_Configs{
         

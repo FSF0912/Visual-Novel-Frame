@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-namespace FSF.DialogueSystem
+namespace FSF.VNG
 {
     public class Character : MonoBehaviour
     {
@@ -29,7 +29,7 @@ namespace FSF.DialogueSystem
             selfRTransform = this.transform as RectTransform;
         }
 
-        public void OutputImage(Sprite target)
+        public void OutputImage(Sprite target = null)
         {
             if(target == null) {return;}
             image1_Tween?.Kill();

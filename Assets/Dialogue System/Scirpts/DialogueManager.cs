@@ -4,13 +4,12 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-namespace FSF.DialogueSystem
+namespace FSF.VNG
 {
     public class DialogueManager : MonoSingleton<DialogueManager>
     {
         [Header("Scene Variables")]
         [SerializeField] private GameObject _imageSwitcherPrefab;
-        [SerializeField] private AudioSource _characterVoiceSource;
         [SerializeField] private RectTransform _charactersHolder;
         [SerializeField] private Character _background;
         [Header("Settings")]
@@ -26,11 +25,7 @@ namespace FSF.DialogueSystem
         {
             get
             {
-                return AllowInput && (
-            Input.GetMouseButtonDown(0) ||
-            _activationKeys.Any(Input.GetKeyDown) //||
-            //Input.GetAxis("Mouse ScrollWheel") < 0
-            );
+                return AllowInput && (Input.GetMouseButtonDown(0) ||_activationKeys.Any(Input.GetKeyDown));
             }
         }
 
@@ -56,8 +51,8 @@ namespace FSF.DialogueSystem
         {
             if (_profile == null || _currentIndex >= _profile.actions.Length)
             {
-                ResetDialogue();
                 //return;
+                _currentIndex = 0;
             }
 
             var currentAction = _profile.actions[_currentIndex];
@@ -65,21 +60,20 @@ namespace FSF.DialogueSystem
             if (TypeWriter.Instance.OutputText(currentAction.name, currentAction.dialogue))
             {
                 UpdateCharacter(currentAction);
-                UpdateBackground(currentAction);
-                PlayAudio(currentAction);
+                _background.OutputImage(currentAction.backGround);
+                AudioManager.Instance.PlayAudio(currentAction.audio, currentAction.bg_Music);
+                _currentIndex++;
             }
             else
             {
                 InterruptCharacterActions();
             }
-
-            _currentIndex++;
         }
 
         private void UpdateCharacter(SingleAction action)
         {
             int order = 0;
-            foreach (var option in action.imageOptions)
+            foreach (var option in action.characterOptions)
             {
                 
                 var character = _characterDisplays.FirstOrDefault(
@@ -94,10 +88,6 @@ namespace FSF.DialogueSystem
                 character.Animate(option);
                 character.transform.SetSiblingIndex(option.ArrangeByListOrder ? order : option.CustomOrder);
                 order++;
-            }
-            if (action.TillingCharacters) 
-            {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(_charactersHolder);
             }
         }
 
@@ -115,25 +105,6 @@ namespace FSF.DialogueSystem
             return component;
         }
 
-        private void UpdateBackground(SingleAction action)
-        {
-            if (action.backGround != null)
-            {
-                _background.OutputImage(action.backGround);
-            }
-        }
-
-        private void PlayAudio(SingleAction action)
-        {
-            if(Dialogue_Configs.InterruptVoicePlayback)
-            {
-                _characterVoiceSource.Stop();
-            }
-
-            _characterVoiceSource.clip = action.audio;
-            _characterVoiceSource.Play();
-        }
-
         private void InterruptCharacterActions()
         {
             foreach (var display in _characterDisplays)
@@ -141,11 +112,6 @@ namespace FSF.DialogueSystem
                 display.Interrupt();
             }
             _background.Interrupt();
-        }
-
-        public void ResetDialogue()
-        {
-            _currentIndex = 0;
         }
     }
 }
