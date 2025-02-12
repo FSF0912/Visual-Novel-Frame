@@ -1,13 +1,16 @@
 using FSF.Collection;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FSF.VNG
 {
     public class AudioManager : MonoSingleton<AudioManager>
     {
-        public AudioSource bg_MusicSource{get; set;}
-        public AudioSource voice_Source{get; set;}
+        public AudioSource bg_MusicSource {get; set;}
+        public AudioSource voice_Source {get; set;}
+        public Image Percentage;
+        public float lerpSpeed = 12f;
         Tween audioFader;
 
         protected override void OnAwake()
@@ -18,6 +21,22 @@ namespace FSF.VNG
             {
                 this.gameObject.AddComponent<AudioListener>();
             }
+            Percentage.fillAmount = 0.01f;
+        }
+
+        private void Update()
+        {
+            float progress;
+            if (voice_Source.clip)
+            {
+                progress = voice_Source.time / voice_Source.clip.length;
+                if (progress == 0)
+                {
+                    progress = 1;
+                }
+            }
+            else progress = 1;
+            Percentage.fillAmount = progress;
         }
 
         public void PlayAudio(AudioClip voice = null, AudioClip bgMusic = null)
@@ -41,6 +60,16 @@ namespace FSF.VNG
                     audioFader = bg_MusicSource.DOFade(1, 0.12f);
                 });
             }
+        }
+
+        public void SetVolumeVoice(float volume)
+        {
+            voice_Source.volume = Mathf.Clamp(volume, 0, 1);
+        }
+
+        public void SetVolumeBGMusic(float volume)
+        {
+            bg_MusicSource.volume = Mathf.Clamp(volume, 0, 1);
         }
     }
 }

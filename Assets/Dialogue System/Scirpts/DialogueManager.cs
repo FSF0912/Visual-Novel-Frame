@@ -2,7 +2,8 @@ using FSF.Collection;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using UnityEngine.UI;
+using DG.Tweening;
+using Cysharp.Threading.Tasks;
 
 namespace FSF.VNG
 {
@@ -105,6 +106,22 @@ namespace FSF.VNG
             return component;
         }
 
+        private async UniTask<Character> InstantiateCharacterAsync(CharacterOption option)
+        {
+            var Sync = InstantiateAsync(_imageSwitcherPrefab, _charactersHolder);
+            await Sync;
+            var temp = Sync.Result[0];
+            temp.name = $"Character_{option.characterDefindID}";
+            var rt = temp.transform as RectTransform;
+            rt.anchoredPosition = new(-2000, -1500);
+            rt.sizeDelta = new(0, 1100);
+
+            var component = temp.GetComponent<Character>();
+            component.characterDefindID = option.characterDefindID;
+            _characterDisplays.Add(component);
+            return component;
+        }
+
         private void InterruptCharacterActions()
         {
             foreach (var display in _characterDisplays)
@@ -112,6 +129,11 @@ namespace FSF.VNG
                 display.Interrupt();
             }
             _background.Interrupt();
+        }
+
+        private void OnDestroy()
+        {
+            Debug.Log($"Killed {DOTween.KillAll()} Tweens.");
         }
     }
 }

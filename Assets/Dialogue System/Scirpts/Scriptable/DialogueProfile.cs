@@ -123,8 +123,8 @@ namespace FSF.VNG
 #endregion
 
 
-# if UNITY_EDITOR
-    [CreateAssetMenu(fileName = "DialogueProfile", menuName = "FSF_Custom/DialogueSystem/DialogueProfile", order = 30000)]
+
+    [CreateAssetMenu(fileName = "DialogueProfile", menuName = "VNG/DialogueProfile", order = 30000)]
     public class DialogueProfile : ScriptableObject
     {
         public SingleAction[] actions;
@@ -136,6 +136,7 @@ namespace FSF.VNG
             }
         }
     }
+    #if UNITY_EDITOR
     [CustomEditor(typeof(DialogueProfile))]
     public class DialogueProfileEditor : Editor
     {
