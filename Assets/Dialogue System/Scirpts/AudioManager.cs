@@ -9,7 +9,6 @@ namespace FSF.VNG
     {
         public AudioSource bg_MusicSource {get; set;}
         public AudioSource voice_Source {get; set;}
-        public Image Percentage;
         public float lerpSpeed = 12f;
         Tween audioFader;
 
@@ -21,22 +20,6 @@ namespace FSF.VNG
             {
                 this.gameObject.AddComponent<AudioListener>();
             }
-            Percentage.fillAmount = 0.01f;
-        }
-
-        private void Update()
-        {
-            float progress;
-            if (voice_Source.clip)
-            {
-                progress = voice_Source.time / voice_Source.clip.length;
-                if (progress == 0)
-                {
-                    progress = 1;
-                }
-            }
-            else progress = 1;
-            Percentage.fillAmount = progress;
         }
 
         public void PlayAudio(AudioClip voice = null, AudioClip bgMusic = null)

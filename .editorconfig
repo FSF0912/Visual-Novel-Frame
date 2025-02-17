@@ -5,3 +5,6 @@ dotnet_diagnostic.IDE0058.severity = none
 
 # IDE0003: 删除限定
 dotnet_diagnostic.IDE0003.severity = none
+
+# IDE0051: 删除未使用的私有成员
+dotnet_diagnostic.IDE0051.severity = none

@@ -7,7 +7,7 @@ namespace FSF.VNG
     public class TypeWriter : MonoSingleton<TypeWriter>
     {
         public Text Name, Dialogue;
-        Tween typer;
+        public Tween typer_Tween;
         string current_Dialogue;
         bool done = true;
 
@@ -15,11 +15,13 @@ namespace FSF.VNG
         {
             if (done)
             {
-                typer?.Kill();
+                typer_Tween?.Kill();
                 current_Dialogue = dialogue;
                 Name.text = name;
                 Dialogue.text = string.Empty;
-                typer = Dialogue.DOText(dialogue, dialogue.Length * Dialogue_Configs.textTypeDuration).SetEase(Ease.Linear).OnComplete(()=>{
+                typer_Tween = Dialogue.DOText(dialogue, dialogue.Length * Dialogue_Configs.textTypeDuration).SetEase(Ease.Linear);
+                typer_Tween.SetAutoKill(false);
+                typer_Tween.OnComplete(()=>{
                     done = true;
                 });
                 done = false;
@@ -27,7 +29,7 @@ namespace FSF.VNG
             }
             else
             {
-                typer?.Kill();
+                typer_Tween?.Kill();
                 Dialogue.text = current_Dialogue;
                 current_Dialogue = dialogue;
                 done = true;

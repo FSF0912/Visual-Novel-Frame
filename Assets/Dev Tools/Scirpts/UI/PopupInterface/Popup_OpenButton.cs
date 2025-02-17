@@ -8,7 +8,7 @@ namespace FSF.UI{
         public PopupInterface popupInterface;
         private void Start(){
             GetComponent<Button>().onClick.AddListener(()=>{
-                popupInterface.OperatePanel(this.transform.position,true);
+                popupInterface.TogglePanel();
             });
         }
     }

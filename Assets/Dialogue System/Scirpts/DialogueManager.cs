@@ -9,7 +9,7 @@ namespace FSF.VNG
 {
     public class DialogueManager : MonoSingleton<DialogueManager>
     {
-        [Header("Scene Variables")]
+        [Header("Variables")]
         [SerializeField] private GameObject _imageSwitcherPrefab;
         [SerializeField] private RectTransform _charactersHolder;
         [SerializeField] private Character _background;
@@ -134,6 +134,7 @@ namespace FSF.VNG
         private void OnDestroy()
         {
             Debug.Log($"Killed {DOTween.KillAll()} Tweens.");
+            System.Console.Write("ss");
         }
     }
 }

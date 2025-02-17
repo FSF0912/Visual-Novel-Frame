@@ -43,10 +43,10 @@ namespace FSF.Collection{
         {
             base.OnInspectorGUI();
             var T = target as Editor_Debug;
-            if (T == null) {return;}
+            if (T == null) return;
             serializedObject.Update();
 
-            using(var VerticalScope = new egl.VerticalScope(EditorStyles.helpBox))
+            using (var VerticalScope = new egl.VerticalScope(EditorStyles.helpBox))
             {
                 egl.LabelField("↓Restart Scene Code↓");
                 egl.PropertyField(re_Key, GUIContent.none);

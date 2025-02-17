@@ -67,7 +67,7 @@ Shader "Hidden/UITextOutline"
                 const fixed OffsetY[12] = {0, 0.5, 0.866, 1, 0.866, 0.5, 0, -0.5, -0.866, -1, -0.866, -0.5};
                 float2 offset_uv = i.uv + float2(OffsetX[ii], OffsetY[ii]) * _MainTex_TexelSize.xy * i.width;
                 fixed sample_a = (tex2D(_MainTex, offset_uv)).a;
-                fixed a = sample_a ;
+                fixed a = sample_a;
                 a *= isInRange(i.border.xy, i.border.zw, offset_uv);
                 return a;
             }
