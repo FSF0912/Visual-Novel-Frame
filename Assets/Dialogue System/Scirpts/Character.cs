@@ -9,12 +9,14 @@ namespace FSF.VNG
     {
         public int characterDefindID = 0;
         public Image targetImage1, targetImage2;
-        //public CustomizeRectInfos customizeRectInfos;
+        public CanvasGroup targetCanvasGroup1, targetCanvasGroup2;
+
         /// <summary>
         /// 为true时，image1在上层(层级中最下面)，
         // image2在下层(层级中最上面)，反之...
         /// </summary>
         bool switcher;
+
         RectTransform selfRTransform;
         Vector2 tempPosition;
         Tween image1_Tween, image2_Tween;
@@ -24,8 +26,8 @@ namespace FSF.VNG
         {
             targetImage1.transform.SetAsLastSibling();
             switcher = true;
-            targetImage1.color = Color.white.WithAlpha(1f);
-            targetImage2.color = Color.white.WithAlpha(0);
+            targetCanvasGroup1.alpha = 1;
+            targetCanvasGroup2.alpha = 0;
             selfRTransform = this.transform as RectTransform;
         }
 
@@ -40,8 +42,8 @@ namespace FSF.VNG
                 targetImage2.sprite = target;
                 targetImage2.transform.SetAsLastSibling();
                 //DOFade。。。
-                image1_Tween = targetImage1.DOFade(0, switchTime);
-                image2_Tween = targetImage2.DOFade(1, switchTime);
+                targetCanvasGroup1.DOFade(0, switchTime);
+                targetCanvasGroup2.DOFade(1, switchTime);
                 //
                 switcher = false;
             }
@@ -50,8 +52,8 @@ namespace FSF.VNG
                 targetImage1.sprite = target;
                 targetImage1.transform.SetAsLastSibling();
                 //
-                image1_Tween = targetImage1.DOFade(1, switchTime);
-                image2_Tween = targetImage2.DOFade(0, switchTime);
+                targetCanvasGroup1.DOFade(1, switchTime);
+                targetCanvasGroup2.DOFade(0, switchTime);
                 //
                 switcher = true;
             }
@@ -76,8 +78,8 @@ namespace FSF.VNG
             image2_Tween?.Kill();
             movementTween?.Kill();
             distanceTween?.Kill();
-            targetImage1.color = Color.white.WithAlpha(switcher ? 255 : 0);
-            targetImage2.color = Color.white.WithAlpha(switcher ? 0 : 255);
+            targetCanvasGroup1.alpha = switcher ? 1 : 0;
+            targetCanvasGroup2.alpha = switcher ? 0 : 1;
             selfRTransform.anchoredPosition = tempPosition;
         }
 

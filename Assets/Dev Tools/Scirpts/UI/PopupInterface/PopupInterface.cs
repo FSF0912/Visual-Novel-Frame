@@ -48,14 +48,11 @@ namespace FSF.UI
                 canvasGroup.blocksRaycasts = isOpen;
             });
 
-            if (!isOpen)
-            {
-                _animationSequence.Join(
-                    transform.DOPunchRotation(new Vector3(0, 0, URandom.Range(-2f, 2f)), 
-                    duration, 
-                    1, 
-                    0.5f));
-            }
+            _animationSequence.Join(
+                canvasGroup.transform.DOPunchRotation(new Vector3(0, 0, URandom.Range(-3f, 3f)), 
+                duration, 
+                1, 
+                0.5f));
         }
     }
 }

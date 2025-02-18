@@ -15,32 +15,32 @@ namespace FSF.VNG
     [RequireComponent(typeof(Image))]
     public class Percentage : MonoSingleton<Percentage>
     {
-        Tween fader;
-        Image image;
-        bool faded;
-        bool EventInvoked = true;
-        float fadeDuration = 0.1f;
-        AudioSource source;
-        TypeWriter typeWriter;
-        PercentMode percentMode;
+        Tween _fader;
+        Image _image;
+        bool _faded;
+        bool _EventInvoked = true;
+        float _fadeDuration = 0.1f;
+        AudioSource _source;
+        TypeWriter _typeWriter;
+        PercentMode _percentMode;
         public UnityEvent OnComplete = new();
 
         private void Start()
         {
-            image = GetComponent<Image>();
-            source = AudioManager.Instance.voice_Source;
-            typeWriter = TypeWriter.Instance;
+            _image = GetComponent<Image>();
+            _source = AudioManager.Instance.voice_Source;
+            _typeWriter = TypeWriter.Instance;
         }
 
         private void Update()
         {
             float progress;
-            switch (percentMode)
+            switch (_percentMode)
             {
                 case PercentMode.VoiceAndText:
-                    if (source.clip)
+                    if (_source.clip)
                     {
-                        progress = source.time / source.clip.length;
+                        progress = _source.time / _source.clip.length;
                         if (progress == 0)
                         {
                             progress = 1;
@@ -50,9 +50,9 @@ namespace FSF.VNG
                     break;
 
                 case PercentMode.Text:
-                    if (typeWriter.typer_Tween != null)
+                    if (_typeWriter.typer_Tween != null)
                     {
-                        progress = typeWriter.typer_Tween.ElapsedPercentage();
+                        progress = _typeWriter.typer_Tween.ElapsedPercentage();
                     }
                     else progress = 1;
                     break;
@@ -64,26 +64,26 @@ namespace FSF.VNG
 
             if (progress > 0 && progress < 1)
             {
-                if (!faded)
+                if (!_faded)
                 {
-                    fader?.Kill();
-                    fader = image.DOFade(1, fadeDuration);
-                    faded = true;
-                    EventInvoked = false;
+                    _fader?.Kill();
+                    _fader = _image.DOFade(1, _fadeDuration);
+                    _faded = true;
+                    _EventInvoked = false;
                 }
             }
             else if (progress == 1)
             {
-                fader?.Kill();
-                fader = image.DOFade(0, fadeDuration);
-                faded = false;
-                if (!EventInvoked)
+                _fader?.Kill();
+                _fader = _image.DOFade(0, _fadeDuration);
+                _faded = false;
+                if (!_EventInvoked)
                 {
-                    EventInvoked = true;
+                    _EventInvoked = true;
                     OnComplete?.Invoke();
                 }
             }
-            image.fillAmount = progress;
+            _image.fillAmount = progress;
         }
 
         private void OnDestroy()
