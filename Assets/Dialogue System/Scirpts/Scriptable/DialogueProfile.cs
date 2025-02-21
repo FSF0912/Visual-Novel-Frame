@@ -14,25 +14,27 @@ namespace FSF.VNG
         public string name;
         [TextArea(1, 15)] public string dialogue;
         public AudioClip audio;
-        
         public Sprite backGround;
         public AudioClip bg_Music;
         public EnvironmentSettings environmentSettings;
         public CharacterOption[] characterOptions;
 
-        public SingleAction(string name, string dialogue, AudioClip audio,
-                    Sprite backGround, AudioClip bg_Music, EnvironmentSettings settings,
-                    CharacterOption[] options){
+        public SingleAction(
+            string name, string dialogue, 
+
+        AudioClip audio, Sprite backGround, AudioClip bg_Music, 
+
+        EnvironmentSettings environmentSettings, CharacterOption[] characterOptions
+        )
+        {
             this.name = name;
             this.dialogue = dialogue;
-            characterOptions = options;
             this.audio = audio;
             this.backGround = backGround;
-            environmentSettings = settings;
             this.bg_Music = bg_Music;
+            this.environmentSettings = environmentSettings;
+            this.characterOptions = characterOptions;
         }
-
-        
     }
     //
     [System.Serializable]
@@ -41,7 +43,6 @@ namespace FSF.VNG
         public int characterDefindID;
         public Sprite characterImage;
         public MotionPresents motionMode = MotionPresents.None;
-
         public CharacterBehaviourMode behaviourMode = CharacterBehaviourMode.None;
         [Space(10f)]
         public float action_Duration = 0.6f;
@@ -49,8 +50,8 @@ namespace FSF.VNG
         [Header("Custom Options")]
         public bool useOrigin = false;
         public Vector2 origin = Vector2.zero;
-        ///
         public Vector2 appointedPosition = Vector2.zero;
+
         /// <summary>
         /// <para>
         /// 采用列表顺序决定场景中的角色顺序。
@@ -68,6 +69,46 @@ namespace FSF.VNG
         /// </para>
         /// </summary>
         public int CustomOrder;
+
+        public CharacterOption(
+            int characterDefindID, Sprite characterImage, 
+
+            MotionPresents motionMode, CharacterBehaviourMode behaviourMode, 
+
+            float action_Duration, Ease action_Ease, 
+
+            bool useOrigin, Vector2 origin, Vector2 appointedPosition, 
+
+            bool ArrangeByListOrder, int CustomOrder
+        )
+        {
+            this.characterDefindID = characterDefindID;
+            this.characterImage = characterImage;
+            this.motionMode = motionMode;
+            this.behaviourMode = behaviourMode;
+            this.action_Duration = action_Duration;
+            this.action_Ease = action_Ease;
+            this.useOrigin = useOrigin;
+            this.origin = origin;
+            this.appointedPosition = appointedPosition;
+            this.ArrangeByListOrder = ArrangeByListOrder;
+            this.CustomOrder = CustomOrder;
+        }
+    }
+    //
+    [System.Serializable]
+    public struct BranchNode
+    {
+        public string branchName;
+        public int startIndex;
+        public int endIndex;
+
+        public BranchNode(string branchName, int startIndex, int endIndex)
+        {
+            this.branchName = branchName;
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
+        }
     }
     //
     #endregion
@@ -114,11 +155,12 @@ namespace FSF.VNG
         Near
     };
 
-    public enum CharacterFadeType
+    public enum CharacterPresenceStatus
     {
+        None,
         Normal,
-        FadeIn,
-        FadeOut
+        Enter,
+        Exit
     };
 #endregion
 
@@ -128,12 +170,28 @@ namespace FSF.VNG
     public class DialogueProfile : ScriptableObject
     {
         public SingleAction[] actions;
+        public BranchNode[] branches;
+        public int currentIndex {get; private set;}
+        public bool processingChart {get; private set;}
+        public int branchIndex;
+
         public SingleAction this[int index]
         {
             get
             {
                 return actions[index];
             }
+        }
+
+        public void Reboot()
+        {
+            currentIndex = 0;
+            processingChart = false;
+        }
+
+        public void Next()
+        {
+            currentIndex++;
         }
     }
     #if UNITY_EDITOR

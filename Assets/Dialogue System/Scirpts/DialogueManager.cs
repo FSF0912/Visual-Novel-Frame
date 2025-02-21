@@ -8,70 +8,6 @@ using Cysharp.Threading.Tasks;
 
 namespace FSF.VNG
 {
-    [System.Serializable]
-    public class CharacterPoolSingle
-    {
-        public Character Character;
-        public Transform transform => Character.transform;
-        public bool IsBusy;
-
-        public CharacterPoolSingle(Character character)
-        {
-            Character = character;
-            IsBusy = false;
-        }
-
-        public void OutputImage(Sprite target)
-        {
-            Character.OutputImage(target);
-        }
-
-        public void Animate(CharacterOption option)
-        {
-            Character.Animate(option);
-        }
-    }
-    
-    [System.Serializable]
-    public class CharacterPool : IEnumerable<CharacterPoolSingle>
-    {
-        public List<CharacterPoolSingle> singles = new List<CharacterPoolSingle>();
-        public CharacterPoolSingle GetFree()
-        {
-            return singles.FirstOrDefault(single => !single.IsBusy);
-        }
-
-        public void Add(Character character)
-        {
-            singles.Add(new CharacterPoolSingle(character));
-        }
-
-        public IEnumerator<CharacterPoolSingle> GetEnumerator()
-        {
-            foreach (var item in singles)
-            {
-                yield return item;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public CharacterPoolSingle this[int index]
-        {
-            get{
-                return singles[index];
-            }
-
-            set{
-                singles[index] = value;
-            }
-        }
-    }
-
-
     public class DialogueManager : MonoSingleton<DialogueManager>
     {
         [Header("Variables")]
@@ -82,7 +18,7 @@ namespace FSF.VNG
         [SerializeField] private DialogueProfile _profile;
         [SerializeField] private KeyCode[] _activationKeys = 
         { KeyCode.Space, KeyCode.Return, KeyCode.F };
-        [SerializeField] private CharacterPool _characterDisplays =new();
+        [SerializeField] private List<Character> _characterDisplays =new();
 
 
         private int _currentIndex;
@@ -143,11 +79,11 @@ namespace FSF.VNG
             {
                 
                 var character = _characterDisplays.FirstOrDefault(
-                    x => x.Character.characterDefindID == option.characterDefindID
+                    x => x.characterDefindID == option.characterDefindID
                 );
                 if(character == default)
                 {
-                    character = new CharacterPoolSingle(InstantiateCharacter(option));
+                    character = InstantiateCharacter(option);
                 }
 
                 character.OutputImage(option.characterImage);
@@ -191,7 +127,7 @@ namespace FSF.VNG
         {
             foreach (var display in _characterDisplays)
             {
-                display.Character.Interrupt();
+                display.Interrupt();
             }
             _background.Interrupt();
         }

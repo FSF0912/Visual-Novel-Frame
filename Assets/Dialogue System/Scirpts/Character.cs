@@ -10,6 +10,7 @@ namespace FSF.VNG
         public int characterDefindID = 0;
         public Image targetImage1, targetImage2;
         public CanvasGroup targetCanvasGroup1, targetCanvasGroup2;
+        public bool isBuzy = false;
 
         /// <summary>
         /// 为true时，image1在上层(层级中最下面)，
@@ -33,7 +34,7 @@ namespace FSF.VNG
 
         public void OutputImage(Sprite target = null)
         {
-            if(target == null) {return;}
+            if (!isBuzy) {return;} 
             image1_Tween?.Kill();
             image2_Tween?.Kill();
             float switchTime = 0.3f;
@@ -69,6 +70,15 @@ namespace FSF.VNG
             else
             {
                 targetImage2.sprite = target;
+            }
+        }
+
+        public void SetPresenceStatus(CharacterPresenceStatus status)
+        {
+            if (isBuzy && status == CharacterPresenceStatus.Exit)
+            {
+                isBuzy = false;
+                OutputImage();
             }
         }
 
