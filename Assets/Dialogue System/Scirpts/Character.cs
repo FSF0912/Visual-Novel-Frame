@@ -1,4 +1,3 @@
-using FSF.Collection.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -8,95 +7,41 @@ namespace FSF.VNG
     public class Character : MonoBehaviour
     {
         public int characterDefindID = 0;
-        public Image targetImage1, targetImage2;
-        public CanvasGroup targetCanvasGroup1, targetCanvasGroup2;
+        public Image firstImage, secondImage;
+        CanvasRenderer firstRenderer, secondRenderer;
         public bool isBuzy = false;
-
-        /// <summary>
-        /// 为true时，image1在上层(层级中最下面)，
-        // image2在下层(层级中最上面)，反之...
-        /// </summary>
-        bool switcher;
-
+        bool isFirstImage;
         RectTransform selfRTransform;
-        Vector2 tempPosition;
-        Tween image1_Tween, image2_Tween;
-        Tween movementTween, distanceTween;
-
+        Sequence _sequence;
         private void Awake()
         {
-            targetImage1.transform.SetAsLastSibling();
-            switcher = true;
-            targetCanvasGroup1.alpha = 1;
-            targetCanvasGroup2.alpha = 0;
+            firstImage.transform.SetAsLastSibling();
+            isFirstImage = true;
+            firstRenderer = firstImage.GetComponent<CanvasRenderer>();
+            secondRenderer = secondImage.GetComponent<CanvasRenderer>();
+            firstRenderer.SetAlpha(1);
+            secondRenderer.SetAlpha(0);
             selfRTransform = this.transform as RectTransform;
+            if (characterDefindID == -10000) isBuzy = true;
         }
 
-        public void OutputImage(Sprite target = null)
+        public void Output(Sprite target = null, bool image_direct = false, CharacterOption option = null)
         {
-            if (!isBuzy) {return;} 
-            image1_Tween?.Kill();
-            image2_Tween?.Kill();
-            float switchTime = 0.3f;
-            if (switcher)
-            {//切换为image2,image1渐隐,image2渐显。？
-                targetImage2.sprite = target;
-                targetImage2.transform.SetAsLastSibling();
-                //DOFade。。。
-                targetCanvasGroup1.DOFade(0, switchTime);
-                targetCanvasGroup2.DOFade(1, switchTime);
-                //
-                switcher = false;
-            }
-            else
-            {//切换为image1,image2渐隐,image1渐显？。
-                targetImage1.sprite = target;
-                targetImage1.transform.SetAsLastSibling();
-                //
-                targetCanvasGroup1.DOFade(1, switchTime);
-                targetCanvasGroup2.DOFade(0, switchTime);
-                //
-                switcher = true;
-            }
-        }
-
-        public void OutputImageDirect(Sprite target)
-        {   
-            if (target == null) {return;}
-            if (switcher)
+            _sequence?.Kill();
+            _sequence = DOTween.Sequence();
+            if (isFirstImage)
             {
-                targetImage1.sprite = target;
+                secondImage.sprite = target;
+                secondImage.transform.SetAsLastSibling();
             }
             else
             {
-                targetImage2.sprite = target;
+                firstImage.sprite = target;
+                firstImage.transform.SetAsLastSibling();
             }
-        }
+            SetAlpha();
 
-        public void SetPresenceStatus(CharacterPresenceStatus status)
-        {
-            if (isBuzy && status == CharacterPresenceStatus.Exit)
-            {
-                isBuzy = false;
-                OutputImage();
-            }
-        }
-
-        public void Interrupt()
-        {
-            image1_Tween?.Kill();
-            image2_Tween?.Kill();
-            movementTween?.Kill();
-            distanceTween?.Kill();
-            targetCanvasGroup1.alpha = switcher ? 1 : 0;
-            targetCanvasGroup2.alpha = switcher ? 0 : 1;
-            selfRTransform.anchoredPosition = tempPosition;
-        }
-
-        public void Animate(CharacterOption option)
-        {
-            movementTween?.Kill();
-            distanceTween?.Kill();
+            if (option == null) return;
             switch (option.motionMode)
             {
                 case MotionPresents.None:
@@ -106,23 +51,27 @@ namespace FSF.VNG
                             break;
 
                         case CharacterBehaviourMode.ShakeHeavily:
-                            movementTween = selfRTransform.DOShakeAnchorPos(
+                            
+                            _sequence.Join(
+                                selfRTransform.DOShakeAnchorPos(
                                 option.action_Duration, 
                                 strength : 50
-                                );
-                                movementTween.SetEase(option.action_Ease);
+                                ).SetEase(option.action_Ease)
+                            );
                             break;
 
                         case CharacterBehaviourMode.ShackSlightly:
-                            movementTween = selfRTransform.DOShakeAnchorPos(
+                            _sequence.Join(
+                                selfRTransform.DOShakeAnchorPos(
                                 option.action_Duration, 
                                 strength : 10
-                                );
-                                movementTween.SetEase(option.action_Ease);
+                                ).SetEase(option.action_Ease)
+                            );
                             break;
                         
                         case CharacterBehaviourMode.HorizontalMove:
-                            movementTween = selfRTransform.DOShakeAnchorPos(
+                            _sequence.Join(
+                                selfRTransform.DOShakeAnchorPos(
                                 option.action_Duration, 
                                 new Vector2(45f, 0),
                                 2,
@@ -130,12 +79,13 @@ namespace FSF.VNG
                                 false,
                                 true,
                                 ShakeRandomnessMode.Harmonic
-                                );
-                                movementTween.SetEase(option.action_Ease);
+                                ).SetEase(option.action_Ease)
+                            );
                             break;
 
                         case CharacterBehaviourMode.VerticalMove:
-                            movementTween = selfRTransform.DOShakeAnchorPos(
+                            _sequence.Join(
+                                selfRTransform.DOShakeAnchorPos(
                                 option.action_Duration,
                                 new Vector2(0, -45f),
                                 2,
@@ -143,8 +93,8 @@ namespace FSF.VNG
                                 false,
                                 true,
                                 ShakeRandomnessMode.Harmonic
-                                );
-                                movementTween.SetEase(option.action_Ease);
+                                ).SetEase(option.action_Ease)
+                            );
                             break;
 
                         default: break;
@@ -191,24 +141,62 @@ namespace FSF.VNG
                     {
                         selfRTransform.anchoredPosition = option.origin;
                     }
-                    movementTween = selfRTransform.DOAnchorPos(option.appointedPosition, option.action_Duration);
-                    movementTween.SetEase(option.action_Ease);
+                    _sequence.Join(
+                        selfRTransform.DOAnchorPos(option.appointedPosition, option.action_Duration)
+                        .SetEase(option.action_Ease)
+                    );
                     break;
 
                 default: break;
             }
 
-            void MoveToZero()
-            {
+            void MoveToZero() {
                 MoveToAppointedPosition(Vector2.zero);
             }
 
-            void MoveToAppointedPosition(Vector2 pos)
-            {
-                movementTween = selfRTransform.DOAnchorPos(pos, option.action_Duration);
-                movementTween.SetEase(option.action_Ease);
-                tempPosition = pos;
+            void MoveToAppointedPosition(Vector2 pos) {
+                _sequence.Join(
+                    selfRTransform.DOAnchorPos(pos, option.action_Duration)
+                    .SetEase(option.action_Ease)
+                );
             }
+
+            void SetAlpha() {
+                if (image_direct)
+                {
+                    return;
+                }
+
+                if (target == null)
+                {
+                    if (isFirstImage) DOFirst();
+                    else DOSecond();
+                    isFirstImage = !isFirstImage;
+                    return;
+                }
+
+                DOFirst();
+                DOSecond();
+                isFirstImage = !isFirstImage;
+
+                void DOFirst() {
+                    _sequence.Join(
+                        DOTween.To(() => isFirstImage ? 1.0f : 0.0f, x => firstRenderer.SetAlpha(x), isFirstImage ? 0.0f : 1.0f, 0.3f)
+                    );
+                }
+
+                void DOSecond() {
+                    _sequence.Join(
+                        DOTween.To(() => isFirstImage ? 0.0f : 1.0f, x => secondRenderer.SetAlpha(x), isFirstImage ? 1.0f : 0.0f, 0.3f)
+                    );
+                }
+
+            }
+        }
+
+        public void Interrupt()
+        {
+            _sequence?.Complete();
         }
     }
 }

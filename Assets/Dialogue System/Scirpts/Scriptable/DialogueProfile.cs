@@ -42,6 +42,7 @@ namespace FSF.VNG
     {
         public int characterDefindID;
         public Sprite characterImage;
+        public CharacterPresenceStatus presenceStatus = CharacterPresenceStatus.Normal;
         public MotionPresents motionMode = MotionPresents.None;
         public CharacterBehaviourMode behaviourMode = CharacterBehaviourMode.None;
         [Space(10f)]
@@ -170,28 +171,12 @@ namespace FSF.VNG
     public class DialogueProfile : ScriptableObject
     {
         public SingleAction[] actions;
-        public BranchNode[] branches;
-        public int currentIndex {get; private set;}
-        public bool processingChart {get; private set;}
-        public int branchIndex;
-
         public SingleAction this[int index]
         {
             get
             {
                 return actions[index];
             }
-        }
-
-        public void Reboot()
-        {
-            currentIndex = 0;
-            processingChart = false;
-        }
-
-        public void Next()
-        {
-            currentIndex++;
         }
     }
     #if UNITY_EDITOR

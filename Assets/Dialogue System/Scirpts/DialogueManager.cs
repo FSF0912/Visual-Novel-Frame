@@ -62,7 +62,7 @@ namespace FSF.VNG
             if (TypeWriter.Instance.OutputText(currentAction.name, currentAction.dialogue))
             {
                 UpdateCharacter(currentAction);
-                _background.OutputImage(currentAction.backGround);
+                _background.Output(currentAction.backGround);
                 AudioManager.Instance.PlayAudio(currentAction.audio, currentAction.bg_Music);
                 _currentIndex++;
             }
@@ -86,8 +86,7 @@ namespace FSF.VNG
                     character = InstantiateCharacter(option);
                 }
 
-                character.OutputImage(option.characterImage);
-                character.Animate(option);
+                character.Output(option.characterImage, false, option);
                 character.transform.SetSiblingIndex(option.ArrangeByListOrder ? order : option.CustomOrder);
                 order++;
             }
@@ -96,22 +95,6 @@ namespace FSF.VNG
         private Character InstantiateCharacter(CharacterOption option)
         {
             var temp = Instantiate(_imageSwitcherPrefab, _charactersHolder);
-            temp.name = $"Character_{option.characterDefindID}";
-            var rt = temp.transform as RectTransform;
-            rt.anchoredPosition = new(-2000, -1500);
-            rt.sizeDelta = new(0, 1100);
-
-            var component = temp.GetComponent<Character>();
-            component.characterDefindID = option.characterDefindID;
-            _characterDisplays.Add(component);
-            return component;
-        }
-
-        private async UniTask<Character> InstantiateCharacterAsync(CharacterOption option)
-        {
-            var Sync = InstantiateAsync(_imageSwitcherPrefab, _charactersHolder);
-            await Sync;
-            var temp = Sync.Result[0];
             temp.name = $"Character_{option.characterDefindID}";
             var rt = temp.transform as RectTransform;
             rt.anchoredPosition = new(-2000, -1500);

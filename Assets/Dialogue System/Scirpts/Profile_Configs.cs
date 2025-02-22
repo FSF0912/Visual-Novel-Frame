@@ -6,6 +6,5 @@ namespace FSF.VNG
         
         public static float textTypeDuration = 0.01f;
         public static bool InterruptVoicePlayback = true;
-        public const bool FACIAL_EXPRESSIONS = true;
     }
 }
