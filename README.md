@@ -1,8 +1,8 @@
 ###### 原[Collection Frame](https://github.com/FSF0912/CollectionFrame)仓库已经完全弃用，对话系统迁移至本仓库并进一步优化。
-###### Some English and Japanese translations are done by Google Translate, so please forgive any grammatical errors.
+###### Some English and Japanese translations are done by Google Translate, so please forgive any grammatical errors.  
+###### 项目计划迁移到Godot引擎中
 
 ![License](https://img.shields.io/badge/License-Apache2.0-blue)
-![Unity Version](https://img.shields.io/badge/Unity-6000.0.22f1-black)
 
 # Unity视觉小说 - Galgame开发框架/Visual novel - Galgame frame of Unity/Unity ビジュアルノベル - Galgame 開発フレームワーク
 本项目旨在在`Unity`引擎中实现**高度可定制**的**视觉小说/Galgame开发框架**,并提供完整的**对话系统解决方案**与**丰富的扩展功能**。            
