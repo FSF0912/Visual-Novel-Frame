@@ -26,6 +26,6 @@ namespace FSF.Collection{
             OnAwake();
         }
 
-        protected virtual void OnAwake(){}
+        protected virtual void OnAwake() { }
     }
 }

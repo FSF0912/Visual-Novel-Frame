@@ -47,12 +47,12 @@ namespace FSF.VNG
 
         public void SetVolumeVoice(float volume)
         {
-            voice_Source.volume = Mathf.Clamp(volume, 0, 1);
+            voice_Source.volume = Mathf.Clamp01(volume);
         }
 
         public void SetVolumeBGMusic(float volume)
         {
-            bg_MusicSource.volume = Mathf.Clamp(volume, 0, 1);
+            bg_MusicSource.volume = Mathf.Clamp01(volume);
         }
     }
 }

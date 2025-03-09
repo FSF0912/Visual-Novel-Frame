@@ -44,7 +44,6 @@ namespace FSF.VNG
         public Sprite characterImage;
         public CharacterPresenceStatus presenceStatus = CharacterPresenceStatus.Normal;
         public MotionPresents motionMode = MotionPresents.None;
-        public CharacterBehaviourMode behaviourMode = CharacterBehaviourMode.None;
         [Space(10f)]
         public float action_Duration = 0.6f;
         public Ease action_Ease = Ease.InOutSine;
@@ -74,7 +73,7 @@ namespace FSF.VNG
         public CharacterOption(
             int characterDefindID, Sprite characterImage, 
 
-            MotionPresents motionMode, CharacterBehaviourMode behaviourMode, 
+            MotionPresents motionMode,
 
             float action_Duration, Ease action_Ease, 
 
@@ -86,7 +85,6 @@ namespace FSF.VNG
             this.characterDefindID = characterDefindID;
             this.characterImage = characterImage;
             this.motionMode = motionMode;
-            this.behaviourMode = behaviourMode;
             this.action_Duration = action_Duration;
             this.action_Ease = action_Ease;
             this.useOrigin = useOrigin;
@@ -134,18 +132,13 @@ namespace FSF.VNG
         ToCenter,
         ToLeft,
         ToRight,
-        Custom
-    };
-
-    public enum CharacterBehaviourMode
-    {
-        None,
         ShakeHeavily,
         ShackSlightly,
         [InspectorName("←HorizontalMove→")]
         HorizontalMove,
         [InspectorName("↑VerticalMove↓")]
-        VerticalMove
+        VerticalMove,
+        Custom
     };
 
     public enum DistanceState
@@ -179,7 +172,7 @@ namespace FSF.VNG
             }
         }
     }
-    #if UNITY_EDITOR
+    /*#if UNITY_EDITOR
     [CustomEditor(typeof(DialogueProfile))]
     public class DialogueProfileEditor : Editor
     {
@@ -370,29 +363,28 @@ namespace FSF.VNG
                     typeof(Sprite), 
                     false
                 );
-                /*var imageProp = character.FindPropertyRelative("characterImage");
-                var currentSprite = imageProp.objectReferenceValue as Sprite;
+                //var imageProp = character.FindPropertyRelative("characterImage");
+                //var currentSprite = imageProp.objectReferenceValue as Sprite;
+                //EditorGUILayout.BeginHorizontal();
+                //if (GUILayout.Button(currentSprite?.texture ?? Texture2D.whiteTexture, _thumbnailStyle))
+                //{
+                //    EditorGUIUtility.ShowObjectPicker<Sprite>(currentSprite, false, "", GUIUtility.GetControlID(FocusType.Passive));
+                //}
 
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button(currentSprite?.texture ?? Texture2D.whiteTexture, _thumbnailStyle))
-                {
-                    EditorGUIUtility.ShowObjectPicker<Sprite>(currentSprite, false, "", GUIUtility.GetControlID(FocusType.Passive));
-                }
+                //if (Event.current.commandName == "ObjectSelectorUpdated")
+                //{
+                //    if (EditorGUIUtility.GetObjectPickerControlID() == GUIUtility.GetControlID(FocusType.Passive))
+                //    {
+                 //       imageProp.objectReferenceValue = EditorGUIUtility.GetObjectPickerObject();
+                //    }
+                //}
 
-                if (Event.current.commandName == "ObjectSelectorUpdated")
-                {
-                    if (EditorGUIUtility.GetObjectPickerControlID() == GUIUtility.GetControlID(FocusType.Passive))
-                    {
-                        imageProp.objectReferenceValue = EditorGUIUtility.GetObjectPickerObject();
-                    }
-                }
-
-                if (GUILayout.Button("Clear", GUILayout.Width(60)))
-                {
-                    imageProp.objectReferenceValue = null;
-                }
-                EditorGUILayout.EndHorizontal();
-                */
+                //if (GUILayout.Button("Clear", GUILayout.Width(60)))
+                //{
+                //    imageProp.objectReferenceValue = null;
+                //}
+                //EditorGUILayout.EndHorizontal();
+                
 
                 EditorGUILayout.PropertyField(character.FindPropertyRelative("motionMode"));
                 
@@ -471,4 +463,5 @@ namespace FSF.VNG
         #endregion
     }
     #endif
+    */
 }

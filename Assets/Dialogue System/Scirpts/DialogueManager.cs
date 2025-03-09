@@ -31,11 +31,6 @@ namespace FSF.VNG
             }
         }
 
-        protected override void OnAwake()
-        {
-            
-        }
-
         private void Start()
         {
             ShowNextDialogue();
@@ -117,8 +112,7 @@ namespace FSF.VNG
 
         private void OnDestroy()
         {
-            //Debug.Log($"Killed {DOTween.KillAll()} Tweens.");
-            DOTween.Clear();
+            Debug.Log($"Killed {DOTween.KillAll()} Tweens.");
         }
     }
 }
