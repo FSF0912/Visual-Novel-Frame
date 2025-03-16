@@ -12,7 +12,10 @@ namespace FSF.VNG
     {
         [Header("Variables")]
         [SerializeField] private GameObject _imageSwitcherPrefab;
+        [SerializeField] private GameObject _branchOptionButtonPrefab;
+        [Space(5.0f)]
         [SerializeField] private RectTransform _charactersHolder;
+        [SerializeField] private RectTransform _branchOptionsHolder;
         [SerializeField] private Character _background;
         [Header("Settings")]
         [SerializeField] private DialogueProfile _profile;
@@ -22,6 +25,8 @@ namespace FSF.VNG
 
 
         private int _currentIndex;
+        private bool processBranch = false;
+        private Stack<int> BranchReturnPoints = new();
         [HideInInspector] public bool AllowInput = true;
         private bool InputReceived
         {
@@ -44,15 +49,20 @@ namespace FSF.VNG
             }
         }
 
-        public void ShowNextDialogue()
+        public async UniTask ShowNextDialogue()
         {
             if (_profile == null || _currentIndex >= _profile.actions.Length)
             {
-                //return;
                 _currentIndex = 0;
             }
 
             var currentAction = _profile.actions[_currentIndex];
+            if (currentAction.isBranch)
+            {
+                AllowInput = false;
+                BranchReturnPoints.Push(currentAction.branchEndIndex);
+               
+            }
             
             if (TypeWriter.Instance.OutputText(currentAction.name, currentAction.dialogue))
             {
@@ -65,6 +75,8 @@ namespace FSF.VNG
             {
                 InterruptCharacterActions();
             }
+
+
         }
 
         private void UpdateCharacter(SingleAction action)

@@ -17,11 +17,11 @@ namespace FSF.VNG
 
         RectTransform selfRTransform;
         Sequence _sequence;
+        bool isBuzy;
 
         bool char_isFirstImage;
         private float _char_mixWeight;
         private float _cachedClampValue;
-        private float _expressionFactor1, _expressionFactor2;
 
         public float char_mixWeight
         {
@@ -37,11 +37,14 @@ namespace FSF.VNG
                 
                 if (UseExpression)
                 {
-                    expression_Renderer1.SetAlpha(_expressionFactor1 * _cachedClampValue);
-                    expression_Renderer2.SetAlpha(_expressionFactor2 * inverseValue);
+                    expression_Renderer1.SetAlpha(Mathf.Min(value, expression_Renderer1.GetAlpha()));
+                    expression_Renderer2.SetAlpha(Mathf.Min(value, expression_Renderer2.GetAlpha()));
                 }
             }
         }
+
+        #if VNG_EXPRESSION
+        private float _expressionFactor1, _expressionFactor2;
 
         bool expression_isFirstImage;
         private float _expression_mixWeight;
@@ -56,10 +59,11 @@ namespace FSF.VNG
                 _expressionFactor1 = char_Renderer1.GetAlpha();
                 _expressionFactor2 = char_Renderer2.GetAlpha();
                 
-                expression_Renderer1.SetAlpha(_expressionFactor1 * clampedValue);
-                expression_Renderer2.SetAlpha(_expressionFactor2 * (1 - clampedValue));
+                expression_Renderer1.SetAlpha(Mathf.Min(value, char_Renderer1.GetAlpha()));
+                expression_Renderer2.SetAlpha(Mathf.Min(value, char_Renderer2.GetAlpha()));
             }
         }
+        #endif
 
         private void Awake()
         {
@@ -67,6 +71,7 @@ namespace FSF.VNG
             char_isFirstImage = true;
             totalFade.alpha = 1;
             selfRTransform = (RectTransform)this.transform;
+            isBuzy = false;
         }
 
         public void Output(Sprite target = null, bool image_direct = false, CharacterOption option = null)
@@ -92,6 +97,31 @@ namespace FSF.VNG
             }
 
             if (option == null) return;
+
+            switch (option.presenceStatus)
+            {
+                case CharacterPresenceStatus.None: break;
+
+                case CharacterPresenceStatus.Enter:
+                    if (isBuzy) break;
+                    isBuzy = true;
+                    totalFade.alpha = 0;
+                    _sequence.Join(
+                        totalFade.DOFade(1, option.action_Duration)
+                    );
+                break;
+
+                case CharacterPresenceStatus.Exit:
+                    if (!isBuzy) break;
+                    isBuzy = false;
+                    totalFade.alpha =  1;
+                    _sequence.Join(
+                        totalFade.DOFade(0, option.action_Duration)
+                    );
+                break;
+
+            }
+
             Vector2 leftPos = new(-1920, 0);
             Vector2 rightPos = new(1920, 0);
             Vector2 bottomPos = new(0, -1080);

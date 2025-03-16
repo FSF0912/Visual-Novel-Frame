@@ -77,7 +77,9 @@ namespace FSF.VNG
                 {
                     egl.Slider("Total Fade", T.totalFade.alpha, 0, 1);
                     egl.Slider("Char Mix Weight", T.char_mixWeight, 0, 1);
+                    #if VNG_EXPRESSION
                     egl.Slider("Expression Mix Weight", T.expression_mixWeight, 0, 1);
+                    #endif
                 }
             }
             serializedObject.ApplyModifiedProperties();
