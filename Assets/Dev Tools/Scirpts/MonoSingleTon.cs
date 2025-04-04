@@ -1,6 +1,7 @@
 using UnityEngine;
 
-namespace FSF.Collection{
+namespace FSF.Collection
+{
     public class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
     {
         private static T instance;
@@ -20,10 +21,18 @@ namespace FSF.Collection{
             }
             else
             {
-                DestroyImmediate(this.gameObject);
+                Destroy(this.gameObject);
                 return;
             }
             OnAwake();
+        }
+
+        private void OnDestroy()
+        {
+            if(instance == this)
+            {
+                instance = null;
+            }
         }
 
         protected virtual void OnAwake() { }

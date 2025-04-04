@@ -11,7 +11,6 @@ namespace FSF.VNG
         public CanvasGroup totalFade;
         public Image char_Image1, char_Image2;
         public CanvasRenderer char_Renderer1, char_Renderer2;
-
         public Image expression_Image1, expression_Image2;
         public CanvasRenderer expression_Renderer1, expression_Renderer2;
 
@@ -34,12 +33,13 @@ namespace FSF.VNG
 
                 char_Renderer1.SetAlpha(_cachedClampValue);
                 char_Renderer2.SetAlpha(inverseValue);
-                
+            #if VNG_EXPRESSION
                 if (UseExpression)
                 {
                     expression_Renderer1.SetAlpha(Mathf.Min(value, expression_Renderer1.GetAlpha()));
                     expression_Renderer2.SetAlpha(Mathf.Min(value, expression_Renderer2.GetAlpha()));
                 }
+            #endif
             }
         }
 
@@ -74,149 +74,171 @@ namespace FSF.VNG
             isBuzy = false;
         }
 
-        public void Output(Sprite target = null, bool image_direct = false, CharacterOption option = null)
+        public void Output(Sprite target = null, Sprite expression = null, bool direct = false, CharacterOption option = null)
         {
-            _sequence?.Kill(true);
-            _sequence = DOTween.Sequence();
-
-            if (target != null || target != char_isFirstImage ? char_Image2.sprite : char_Image1.sprite)
+            if (!direct)
             {
-                Image targetImage = char_isFirstImage ? char_Image2 : char_Image1;
-                if (!image_direct)
+                _sequence?.Kill(true);
+                _sequence = DOTween.Sequence();
+                if (target == null)
                 {
+                    CharacterMovement();
+                    return;
+                }
+                Sprite currentSprite = char_isFirstImage ? char_Image1.sprite : char_Image2.sprite;
+                if (target != currentSprite)
+                {
+                    Image targetImage = char_isFirstImage ? char_Image2 : char_Image1;
                     targetImage.sprite = target;
-                    _sequence.Join(DOTween.To(() => char_mixWeight, x => char_mixWeight = x,
+                     _sequence.Join(DOTween.To(() => char_isFirstImage ? 1 : 0, x => char_mixWeight = x,
                         char_isFirstImage ? 0 : 1, Dialogue_Configs.characterTranslationTime));
-
                     char_isFirstImage = !char_isFirstImage;
                 }
-                else
+            #if VNG_EXPRESSION
+                if (UseExpression)
                 {
-                    (char_isFirstImage ? char_Image1 : char_Image2).sprite = target;
+                    if (expression == null) return;
+                    Sprite currentExpression = expression_isFirstImage ? expression_Image1.sprite : expression_Image2.sprite;
+                    if (expression != currentExpression)
+                    {
+                        Image targetImage = expression_isFirstImage ? expression_Image2 : expression_Image1;
+                        targetImage.sprite = expression;
+                        _sequence.Join(DOTween.To(() => expression_isFirstImage ? 1 : 0, x => expression_mixWeight = x,
+                            expression_isFirstImage ? 0 : 1, Dialogue_Configs.characterTranslationTime));
+                        expression_isFirstImage = !expression_isFirstImage;
+                    }
                 }
+            #endif
+                CharacterMovement();
+            }
+            else
+            {
+                if (target == null) return;
+                (char_isFirstImage ? char_Image1 : char_Image2).sprite = target;
+                return;
             }
 
-            if (option == null) return;
+            void CharacterMovement() {
+                if (option == null) return;
+                switch (option.presenceStatus)
+                {
+                    case CharacterPresenceStatus.None: break;
 
-            switch (option.presenceStatus)
-            {
-                case CharacterPresenceStatus.None: break;
+                    case CharacterPresenceStatus.Enter:
+                        if (isBuzy) break;
+                        isBuzy = true;
+                        totalFade.alpha = 0;
+                        _sequence.Join(
+                            totalFade.DOFade(1, option.action_Duration)
+                        );
+                        break;
 
-                case CharacterPresenceStatus.Enter:
-                    if (isBuzy) break;
-                    isBuzy = true;
-                    totalFade.alpha = 0;
-                    _sequence.Join(
-                        totalFade.DOFade(1, option.action_Duration)
-                    );
-                break;
+                    case CharacterPresenceStatus.Exit:
+                        if (!isBuzy) break;
+                        isBuzy = false;
+                        totalFade.alpha = 1;
+                        _sequence.Join(
+                            totalFade.DOFade(0, option.action_Duration)
+                        );
+                        break;
+                }
 
-                case CharacterPresenceStatus.Exit:
-                    if (!isBuzy) break;
-                    isBuzy = false;
-                    totalFade.alpha =  1;
-                    _sequence.Join(
-                        totalFade.DOFade(0, option.action_Duration)
-                    );
-                break;
+                Vector2 leftPos = new(-1920, 0);
+                Vector2 rightPos = new(1920, 0);
+                Vector2 bottomPos = new(0, -1080);
 
-            }
+                switch (option.motionMode)
+                {
+                    case MotionPresents.None: break;
 
-            Vector2 leftPos = new(-1920, 0);
-            Vector2 rightPos = new(1920, 0);
-            Vector2 bottomPos = new(0, -1080);
+                    case MotionPresents.LeftEnterToCenter:
+                        selfRTransform.anchoredPosition = leftPos;
+                        MoveToZero();
+                        break;
 
-            switch (option.motionMode)
-            {
-                case MotionPresents.None: break;
+                    case MotionPresents.RightEnterToCenter:
+                        selfRTransform.anchoredPosition = rightPos;
+                        MoveToZero();
+                        break;
 
-                case MotionPresents.LeftEnterToCenter:
-                    selfRTransform.anchoredPosition = leftPos;
-                    MoveToZero();
-                    break;
+                    case MotionPresents.BottomEnterToCenter:
+                        selfRTransform.anchoredPosition = bottomPos;
+                        MoveToZero();
+                        break;
 
-                case MotionPresents.RightEnterToCenter:
-                    selfRTransform.anchoredPosition = rightPos;
-                    MoveToZero();
-                    break;
+                    case MotionPresents.LeftEscape:
+                        MoveToAppointedPosition(leftPos);
+                        break;
 
-                case MotionPresents.BottomEnterToCenter:
-                    selfRTransform.anchoredPosition = bottomPos;
-                    MoveToZero();
-                    break;
+                    case MotionPresents.RightEscape:
+                        MoveToAppointedPosition(rightPos);
+                        break;
 
-                case MotionPresents.LeftEscape:
-                    MoveToAppointedPosition(leftPos);
-                    break;
+                    case MotionPresents.ToCenter:
+                        MoveToZero();
+                        break;
 
-                case MotionPresents.RightEscape:
-                    MoveToAppointedPosition(rightPos);
-                    break;
+                    case MotionPresents.ToLeft:
+                        MoveToAppointedPosition(new(-500, 0));
+                        break;
 
-                case MotionPresents.ToCenter:
-                    MoveToZero();
-                    break;
+                    case MotionPresents.ToRight:
+                        MoveToAppointedPosition(new(500, 0));
+                        break;
 
-                case MotionPresents.ToLeft:
-                    MoveToAppointedPosition(new(-500, 0));
-                    break;
+                    case MotionPresents.Custom when option.useOrigin:
+                        selfRTransform.anchoredPosition = option.origin;
+                        goto default;
 
-                case MotionPresents.ToRight:
-                    MoveToAppointedPosition(new(500, 0));
-                    break;
+                    case MotionPresents.Custom:
+                        _sequence.Join(selfRTransform.DOAnchorPos(option.appointedPosition, 
+                            option.action_Duration).SetEase(option.action_Ease));
+                        break;
 
-                case MotionPresents.Custom when option.useOrigin:
-                    selfRTransform.anchoredPosition = option.origin;
-                    goto default;
+                    case MotionPresents.ShakeHeavily:
+                        _sequence.Join(selfRTransform.DOShakeAnchorPos(
+                            option.action_Duration, 
+                            strength: 50).SetEase(option.action_Ease));
+                        break;
 
-                case MotionPresents.Custom:
-                    _sequence.Join(selfRTransform.DOAnchorPos(option.appointedPosition, 
-                        option.action_Duration).SetEase(option.action_Ease));
-                    break;
+                    case MotionPresents.ShackSlightly:
+                        _sequence.Join(selfRTransform.DOShakeAnchorPos(
+                            option.action_Duration, 
+                            strength: 10).SetEase(option.action_Ease));
+                        break;
+                    
+                    case MotionPresents.HorizontalMove:
+                        _sequence.Join(selfRTransform.DOShakeAnchorPos(
+                            option.action_Duration, 
+                            new Vector2(45f, 0),
+                            2,
+                            20f,
+                            false,
+                            true,
+                            ShakeRandomnessMode.Harmonic).SetEase(option.action_Ease));
+                        break;
 
-                case MotionPresents.ShakeHeavily:
-                    _sequence.Join(selfRTransform.DOShakeAnchorPos(
-                        option.action_Duration, 
-                        strength: 50).SetEase(option.action_Ease));
-                    break;
+                    case MotionPresents.VerticalMove:
+                        _sequence.Join(selfRTransform.DOShakeAnchorPos(
+                            option.action_Duration,
+                            new Vector2(0, -45f),
+                            2,
+                            20f,
+                            false,
+                            true,
+                            ShakeRandomnessMode.Harmonic).SetEase(option.action_Ease));
+                        break;
 
-                case MotionPresents.ShackSlightly:
-                    _sequence.Join(selfRTransform.DOShakeAnchorPos(
-                        option.action_Duration, 
-                        strength: 10).SetEase(option.action_Ease));
-                    break;
+                    default: break;
+                }
+
+                void MoveToZero() => MoveToAppointedPosition(Vector2.zero);
                 
-                case MotionPresents.HorizontalMove:
-                    _sequence.Join(selfRTransform.DOShakeAnchorPos(
-                        option.action_Duration, 
-                        new Vector2(45f, 0),
-                        2,
-                        20f,
-                        false,
-                        true,
-                        ShakeRandomnessMode.Harmonic).SetEase(option.action_Ease));
-                    break;
-
-                case MotionPresents.VerticalMove:
-                    _sequence.Join(selfRTransform.DOShakeAnchorPos(
-                        option.action_Duration,
-                        new Vector2(0, -45f),
-                        2,
-                        20f,
-                        false,
-                        true,
-                        ShakeRandomnessMode.Harmonic).SetEase(option.action_Ease));
-                    break;
-
-                default: break;
-            }
-
-            void MoveToZero() => MoveToAppointedPosition(Vector2.zero);
-            
-            void MoveToAppointedPosition(Vector2 pos)
-            {
-                _sequence.Join(selfRTransform.DOAnchorPos(pos, option.action_Duration)
-                    .SetEase(option.action_Ease));
+                void MoveToAppointedPosition(Vector2 pos)
+                {
+                    _sequence.Join(selfRTransform.DOAnchorPos(pos, option.action_Duration)
+                        .SetEase(option.action_Ease));
+                }
             }
         }
 

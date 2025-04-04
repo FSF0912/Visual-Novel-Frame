@@ -10,86 +10,82 @@ namespace FSF.VNG
     {
         VoiceAndText,
         Text
-    };
+    }
     
     [RequireComponent(typeof(Image))]
     public class Percentage : MonoSingleton<Percentage>
     {
+        private const float COMPLETE_THRESHOLD = 0.999f;
+        private const float FADE_DURATION = 0.1f;
+
         Tween _fader;
         Image _image;
         bool _faded;
-        bool _EventInvoked = true;
-        float _fadeDuration = 0.1f;
+        bool _eventInvoked = true;
         AudioSource _source;
         TypeWriter _typeWriter;
         PercentMode _percentMode;
+        
         public UnityEvent OnComplete = new();
-
+        
         private void Start()
         {
             _image = GetComponent<Image>();
+            _image.fillAmount = 0f;
             _source = AudioManager.Instance.voice_Source;
-            _typeWriter = TypeWriter.Instance;
         }
 
         private void Update()
         {
-            float progress;
+            var progress = CalculateProgress();
+            
+            UpdateVisuals(progress);
+            HandleCompletion(progress);
+        }
+
+        private float CalculateProgress()
+        {
             switch (_percentMode)
             {
-                case PercentMode.VoiceAndText:
-                    if (_source.clip)
-                    {
-                        progress = _source.time / _source.clip.length;
-                        if (progress == 0)
-                        {
-                            progress = 1;
-                        }
-                    }
-                    else goto case PercentMode.Text;
-                    break;
-
-                case PercentMode.Text:
-                    if (_typeWriter.typer_Tween != null)
-                    {
-                        progress = _typeWriter.typer_Tween.ElapsedPercentage();
-                    }
-                    else progress = 1;
-                    break;
-
+                case PercentMode.VoiceAndText when _source != null && _source.clip != null:
+                    var clipLength = _source.clip.length;
+                    return clipLength > Mathf.Epsilon ? 
+                        Mathf.Clamp01(_source.time / clipLength) : 1f;
+                
+                case PercentMode.Text when _typeWriter != null && _typeWriter.typer_Tween != null:
+                    return Mathf.Clamp01(_typeWriter.typer_Tween.ElapsedPercentage());
+                
                 default:
-                    progress = 1;
-                    break;
+                    return 1f;
             }
+        }
 
-            if (progress > 0 && progress < 1)
-            {
-                if (!_faded)
-                {
-                    _fader?.Kill();
-                    _fader = _image.DOFade(1, _fadeDuration);
-                    _faded = true;
-                    _EventInvoked = false;
-                }
-            }
-            else if (progress == 1)
-            {
-                _fader?.Kill();
-                _fader = _image.DOFade(0, _fadeDuration);
-                _faded = false;
-                if (!_EventInvoked)
-                {
-                    _EventInvoked = true;
-                    OnComplete?.Invoke();
-                }
-            }
+        private void UpdateVisuals(float progress)
+        {
             _image.fillAmount = progress;
+            
+            var shouldShow = progress > Mathf.Epsilon && 
+                           progress < COMPLETE_THRESHOLD;
+            
+            if (shouldShow == _faded) return;
+            
+            _fader?.Kill();
+            _fader = _image.DOFade(shouldShow ? 1f : 0f, FADE_DURATION);
+            _faded = shouldShow;
+        }
+
+        private void HandleCompletion(float progress)
+        {
+            if (!(progress >= COMPLETE_THRESHOLD) || _eventInvoked) return;
+            
+            OnComplete?.Invoke();
+            _eventInvoked = true;
         }
 
         private void OnDestroy()
         {
+            _fader?.Kill();
             OnComplete.RemoveAllListeners();
         }
-
     }
 }

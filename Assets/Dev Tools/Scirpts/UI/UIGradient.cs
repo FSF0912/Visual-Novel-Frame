@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace FSF.UI{
-    public class UIGradient : BaseMeshEffect{
+namespace FSF.UI
+{
+    public class UIGradient : BaseMeshEffect
+    {
         public enum Type
     {
         Vertical,

@@ -8,8 +8,16 @@ using Cysharp.Threading.Tasks;
 
 namespace FSF.VNG
 {
+    public enum DialogueState
+    {
+        NormalProgress,
+        BranchSelection,
+        BranchExecution
+    };
+
     public class DialogueManager : MonoSingleton<DialogueManager>
     {
+        public DialogueState CurrentState = DialogueState.NormalProgress;
         [Header("Variables")]
         [SerializeField] private GameObject _imageSwitcherPrefab;
         [SerializeField] private GameObject _branchOptionButtonPrefab;
@@ -25,8 +33,7 @@ namespace FSF.VNG
 
 
         private int _currentIndex;
-        private bool processBranch = false;
-        private Stack<int> BranchReturnPoints = new();
+        
         [HideInInspector] public bool AllowInput = true;
         private bool InputReceived
         {
@@ -49,19 +56,20 @@ namespace FSF.VNG
             }
         }
 
-        public async UniTask ShowNextDialogue()
+        public void ShowNextDialogue()
         {
+            //
             if (_profile == null || _currentIndex >= _profile.actions.Length)
             {
                 _currentIndex = 0;
             }
+            //
 
             var currentAction = _profile.actions[_currentIndex];
+
             if (currentAction.isBranch)
             {
-                AllowInput = false;
-                BranchReturnPoints.Push(currentAction.branchEndIndex);
-               
+                CurrentState = DialogueState.BranchSelection;
             }
             
             if (TypeWriter.Instance.OutputText(currentAction.name, currentAction.dialogue))
@@ -90,16 +98,19 @@ namespace FSF.VNG
                 );
                 if(character == default)
                 {
-                    character = InstantiateCharacter(option);
+                    character = InitCharacter(option);
                 }
-
-                character.Output(option.characterImage, false, option);
+            #if VNG_EXPRESSION
+                character.Output(option.characterImage, option.characterExpression, false, option);
+            #else
+                character.Output(option.characterImage, null, false, option);
+            #endif
                 character.transform.SetSiblingIndex(option.ArrangeByListOrder ? order : option.CustomOrder);
                 order++;
             }
         }
 
-        private Character InstantiateCharacter(CharacterOption option)
+        private Character InitCharacter(CharacterOption option)
         {
             var temp = Instantiate(_imageSwitcherPrefab, _charactersHolder);
             temp.name = $"Character_{option.characterDefindID}";

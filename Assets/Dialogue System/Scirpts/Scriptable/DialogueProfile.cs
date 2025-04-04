@@ -54,6 +54,9 @@ namespace FSF.VNG
     {
         public int characterDefindID;
         public Sprite characterImage;
+    #if VNG_EXPRESSION
+        public Sprite characterExpression;
+    #endif
         public CharacterPresenceStatus presenceStatus = CharacterPresenceStatus.None;
         public MotionPresents motionMode = MotionPresents.None;
         [Space(10f)]
@@ -82,6 +85,7 @@ namespace FSF.VNG
         /// </summary>
         public int CustomOrder;
 
+    #if !VNG_EXPRESSION
         public CharacterOption(
             int characterDefindID, Sprite characterImage, 
 
@@ -105,6 +109,32 @@ namespace FSF.VNG
             this.ArrangeByListOrder = ArrangeByListOrder;
             this.CustomOrder = CustomOrder;
         }
+    #else
+        public CharacterOption(
+            int characterDefindID, Sprite characterImage, Sprite characterExpression,
+
+            MotionPresents motionMode,
+
+            float action_Duration, Ease action_Ease, 
+
+            bool useOrigin, Vector2 origin, Vector2 appointedPosition, 
+
+            bool ArrangeByListOrder, int CustomOrder
+        )
+        {
+            this.characterDefindID = characterDefindID;
+            this.characterImage = characterImage;
+            this.characterExpression = characterExpression;
+            this.motionMode = motionMode;
+            this.action_Duration = action_Duration;
+            this.action_Ease = action_Ease;
+            this.useOrigin = useOrigin;
+            this.origin = origin;
+            this.appointedPosition = appointedPosition;
+            this.ArrangeByListOrder = ArrangeByListOrder;
+            this.CustomOrder = CustomOrder;
+        }
+    #endif
     }
     //
     [Serializable]

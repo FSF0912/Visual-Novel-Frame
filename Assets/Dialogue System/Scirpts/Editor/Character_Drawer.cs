@@ -53,7 +53,6 @@ namespace FSF.VNG
                 egl.PropertyField(char_Image2);
                 egl.PropertyField(char_Renderer2);
             }
-            
             if (T.UseExpression)
             {
                 egl.Space(3);

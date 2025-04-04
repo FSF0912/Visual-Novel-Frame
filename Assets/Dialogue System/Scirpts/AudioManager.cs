@@ -9,7 +9,6 @@ namespace FSF.VNG
     {
         public AudioSource bg_MusicSource {get; set;}
         public AudioSource voice_Source {get; set;}
-        public float lerpSpeed = 12f;
         Tween audioFader;
 
         protected override void OnAwake()
