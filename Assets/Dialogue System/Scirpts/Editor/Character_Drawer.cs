@@ -1,11 +1,10 @@
 using UnityEditor;
-using UnityEngine;
 using egl = UnityEditor.EditorGUILayout;
 
 namespace FSF.VNG
 {
     [CustomEditor(typeof(Character))]
-    public class CharacterDrawer : Editor
+    public class CharacterDrawer : UnityEditor.Editor
     {
         SerializedProperty defindID;
         SerializedProperty useExpression;

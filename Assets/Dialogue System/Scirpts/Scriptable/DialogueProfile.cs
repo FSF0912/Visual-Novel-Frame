@@ -21,7 +21,6 @@ namespace FSF.VNG
         public EnvironmentSettings environmentSettings;
         public CharacterOption[] characterOptions;
         public bool isBranch;
-        public int branchEndIndex;
         public BranchOption[] branchOptions;
 
         public SingleAction(
@@ -30,7 +29,7 @@ namespace FSF.VNG
         AudioClip audio, Sprite backGround, AudioClip bg_Music, 
 
         EnvironmentSettings environmentSettings, CharacterOption[] characterOptions, 
-        bool isBranch, int branchEndJumpIndex, BranchOption[] branchOptions
+        bool isBranch, BranchOption[] branchOptions
         )
         {
             this.name = name;
@@ -41,7 +40,6 @@ namespace FSF.VNG
             this.environmentSettings = environmentSettings;
             this.characterOptions = characterOptions;
             this.isBranch = isBranch;
-            this.branchEndIndex = branchEndJumpIndex;
             this.branchOptions = branchOptions;
         }
     }
@@ -143,12 +141,14 @@ namespace FSF.VNG
         public string BranchText;
         public int jumpIndex;
         public int endIndex;
+        public int returnIndex;
 
-        public BranchOption(string BranchText, int jumpIndex, int endIndex)
+        public BranchOption(string BranchText, int jumpIndex, int endIndex, int returnIndex)
         {
             this.BranchText = BranchText;
             this.jumpIndex = jumpIndex;
             this.endIndex = endIndex;
+            this.returnIndex = returnIndex;
         }
     } 
     //
@@ -217,7 +217,5 @@ namespace FSF.VNG
                 actions[index] = value;
             }
         }
-    
-    
     }
 }

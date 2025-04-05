@@ -25,6 +25,7 @@ namespace FSF.VNG
         {
             if (voice)
             {
+                if (voice == voice_Source.clip && voice_Source.isPlaying) return;
                 voice_Source.Stop();
                 voice_Source.clip = voice;
                 voice_Source.Play();
@@ -32,16 +33,23 @@ namespace FSF.VNG
 
             if (bgMusic)
             {
+                if (bgMusic == bg_MusicSource.clip && bg_MusicSource.isPlaying) return;
                 audioFader?.Kill();
                 audioFader = bg_MusicSource.DOFade(0, 0.12f);
+                var music = bgMusic;
                 audioFader.OnComplete(()=>
                 {
                     bg_MusicSource.Stop();
-                    bg_MusicSource.clip = bgMusic;
+                    bg_MusicSource.clip = music;
                     bg_MusicSource.Play();
                     audioFader = bg_MusicSource.DOFade(1, 0.12f);
                 });
             }
+        }
+
+        public void InterruptAudio()
+        {
+            voice_Source.Stop();
         }
 
         public void SetVolumeVoice(float volume)

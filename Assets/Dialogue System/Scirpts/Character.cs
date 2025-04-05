@@ -90,7 +90,7 @@ namespace FSF.VNG
                 {
                     Image targetImage = char_isFirstImage ? char_Image2 : char_Image1;
                     targetImage.sprite = target;
-                     _sequence.Join(DOTween.To(() => char_isFirstImage ? 1 : 0, x => char_mixWeight = x,
+                     _sequence.Join(DOTween.To(() => char_mixWeight, x => char_mixWeight = x,
                         char_isFirstImage ? 0 : 1, Dialogue_Configs.characterTranslationTime));
                     char_isFirstImage = !char_isFirstImage;
                 }
