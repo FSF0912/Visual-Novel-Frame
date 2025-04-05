@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DialogueProfile
   m_EditorClassIdentifier: 
   actions:
-  - name: index:1 Jenny
+  - name: index:0 Jenny
     dialogue: Hello!
     audio: {fileID: 8300000, guid: 0ea950c1ca107eb46a716dc7f76a5c4a, type: 3}
     backGround: {fileID: 21300000, guid: 3a9afca971d5f5a47b794047ac9315e3, type: 3}
@@ -46,7 +46,7 @@ MonoBehaviour:
       CustomOrder: 0
     isBranch: 0
     branchOptions: []
-  - name: index:2 Mike
+  - name: index:1 Mike
     dialogue: "Hi\uFF01"
     audio: {fileID: 8300000, guid: a21fe7de1a992574da973d1ea80c8c76, type: 3}
     backGround: {fileID: 21300000, guid: 3a9afca971d5f5a47b794047ac9315e3, type: 3}
@@ -79,9 +79,9 @@ MonoBehaviour:
       CustomOrder: 0
     isBranch: 0
     branchOptions: []
-  - name: index:3 Mita
+  - name: index:2 Mita
     dialogue: Nice to meet you
-    audio: {fileID: 8300000, guid: d4f3ed980625bac4193dd6c521da9d59, type: 3}
+    audio: {fileID: 0}
     backGround: {fileID: 21300000, guid: 3a9afca971d5f5a47b794047ac9315e3, type: 3}
     bg_Music: {fileID: 8300000, guid: 8003f463b44be4b4181c075607fe84cd, type: 3}
     environmentSettings: 0
@@ -120,7 +120,7 @@ MonoBehaviour:
       jumpIndex: 0
       endIndex: 0
       returnIndex: 0
-  - name: "index:4 \u51AC\u65E5winterovo"
+  - name: "index:3 \u51AC\u65E5winterovo"
     dialogue: "\u50BB\u903C"
     audio: {fileID: 8300000, guid: 133d141f4c92bc743862741e741438eb, type: 3}
     backGround: {fileID: 21300000, guid: 1df7a113bfba7b04db8e5b64e26862ac, type: 3}
@@ -153,7 +153,7 @@ MonoBehaviour:
       CustomOrder: 0
     isBranch: 0
     branchOptions: []
-  - name: "index:5 fer\u53F6\u67AB"
+  - name: "index:4 fer\u53F6\u67AB"
     dialogue: "\u50BB\u903C"
     audio: {fileID: 8300000, guid: 133d141f4c92bc743862741e741438eb, type: 3}
     backGround: {fileID: 21300000, guid: b1b45472fedda9f41a0e3e3c7a108412, type: 3}
@@ -190,7 +190,7 @@ MonoBehaviour:
       jumpIndex: 0
       endIndex: 0
       returnIndex: 0
-  - name: index:6 !??!
+  - name: index:5 !??!
     dialogue: nimabi
     audio: {fileID: 8300000, guid: 0ddb9079958506744826df75c7f0cc22, type: 3}
     backGround: {fileID: 21300000, guid: 1df7a113bfba7b04db8e5b64e26862ac, type: 3}
@@ -223,7 +223,7 @@ MonoBehaviour:
       CustomOrder: 0
     isBranch: 0
     branchOptions: []
-  - name: "index:7 \u6768\u54E5\u6211\u6765\u4E86"
+  - name: "index:6 \u6768\u54E5\u6211\u6765\u4E86"
     dialogue: end_
     audio: {fileID: 8300000, guid: 7d84757a7ebe5f64a9681671a1cf237d, type: 3}
     backGround: {fileID: 21300000, guid: 1df7a113bfba7b04db8e5b64e26862ac, type: 3}
@@ -256,7 +256,7 @@ MonoBehaviour:
       CustomOrder: 0
     isBranch: 0
     branchOptions: []
-  - name: index:8 Branch
+  - name: index:7 Branch
     dialogue: 
     audio: {fileID: 8300000, guid: 7d84757a7ebe5f64a9681671a1cf237d, type: 3}
     backGround: {fileID: 21300000, guid: 1df7a113bfba7b04db8e5b64e26862ac, type: 3}

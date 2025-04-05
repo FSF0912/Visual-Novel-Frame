@@ -4,6 +4,8 @@ using System.Linq;
 using System.Collections.Generic;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
+using System.Threading;
+using System.IO;
 
 namespace FSF.VNG
 {
@@ -11,24 +13,23 @@ namespace FSF.VNG
     {
         [Header("Variables")]
         [SerializeField] private GameObject _imageSwitcherPrefab;
-        [SerializeField] private GameObject _branchOptionButtonPrefab;
         [Space(5.0f)]
         [SerializeField] private RectTransform _charactersHolder;
-        [SerializeField] private RectTransform _branchOptionsHolder;
         [SerializeField] private Character _background;
         [Header("Settings")]
         [SerializeField] private DialogueProfile _profile;
         [SerializeField] private KeyCode[] _activationKeys = 
         { KeyCode.Space, KeyCode.Return, KeyCode.F };
-        [SerializeField] private List<Character> _characterDisplays = new();
+        [SerializeField] private Dictionary<int, Character> _characterDisplays = new();
 
         private int _currentIndex;
         private bool processingBranch = false;
         private BranchOption? currentBranchOption = null;
         private Stack<int> returnIndexStack = new();
+
         [HideInInspector] public bool AllowInput = true;
 
-        private bool InputReceived => 
+        public bool InputReceived => 
             AllowInput && 
             (Input.GetMouseButtonDown(0) || _activationKeys.Any(Input.GetKeyDown));
 
@@ -47,15 +48,18 @@ namespace FSF.VNG
 
         public async UniTask ShowNextDialogue()
         {
-            /*if (_profile == null || _currentIndex >= _profile.actions.Length)
+            if (processingBranch) return; 
+            if (_profile == null || _currentIndex >= _profile.actions.Length)
             {
-                _currentIndex = 0;
-            }*/
+                Debug.Log("对话结束");
+                return;
+            }
 
-            if (currentBranchOption.HasValue && _currentIndex >= currentBranchOption.Value.endIndex)
+            if (currentBranchOption.HasValue && _currentIndex > currentBranchOption.Value.endIndex)
             {
                 _currentIndex = returnIndexStack.Pop();
                 currentBranchOption = null;
+                ShowNextDialogue().Forget();
                 return;
             }
 
@@ -75,11 +79,10 @@ namespace FSF.VNG
 
             if (TypeWriter.Instance.OutputText(currentAction.name, currentAction.dialogue))
             {
-                int order = 0; // 恢复手动计数
+                int order = 0;
                 foreach (var option in currentAction.characterOptions)
                 {
-                    var character = _characterDisplays.FirstOrDefault(x => x.characterDefindID == option.characterDefindID);
-                    if (character == null)
+                    if (!_characterDisplays.TryGetValue(option.characterDefindID, out var character))
                     {
                         character = Instantiate(_imageSwitcherPrefab, _charactersHolder).GetComponent<Character>();
                         character.characterDefindID = option.characterDefindID;
@@ -87,7 +90,7 @@ namespace FSF.VNG
                         var rt = character.transform as RectTransform;
                         rt.anchoredPosition = new Vector2(-2000, -1500);
                         rt.sizeDelta = new Vector2(0, 1100);
-                        _characterDisplays.Add(character);
+                        _characterDisplays.Add(option.characterDefindID, character);
                     }
 
         #if VNG_EXPRESSION
@@ -95,9 +98,8 @@ namespace FSF.VNG
         #else
                     character.Output(option.characterImage, null, false, option);
         #endif
-                    // 恢复原始排序逻辑
                     character.transform.SetSiblingIndex(option.ArrangeByListOrder ? order : option.CustomOrder);
-                    order++; // 手动递增顺序
+                    order++;
                 }
 
                 _background.Output(currentAction.backGround);
@@ -106,7 +108,7 @@ namespace FSF.VNG
             }
             else
             {
-                foreach (var display in _characterDisplays) display.Interrupt();
+                foreach (var display in _characterDisplays) display.Value.Interrupt();
                 _background.Interrupt();
                 if (Dialogue_Configs.InterruptVoicePlayback)
                 {
@@ -117,7 +119,7 @@ namespace FSF.VNG
 
         private void OnDestroy()
         {
-            DOTween.KillAll();
+            Debug.Log($"Killed {DOTween.KillAll()} tweens.");
         }
     }
 }

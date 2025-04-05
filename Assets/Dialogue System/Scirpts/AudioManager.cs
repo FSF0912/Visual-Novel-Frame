@@ -42,7 +42,6 @@ namespace FSF.VNG
                     bg_MusicSource.Stop();
                     bg_MusicSource.clip = music;
                     bg_MusicSource.Play();
-                    audioFader = bg_MusicSource.DOFade(1, 0.12f);
                 });
             }
         }
