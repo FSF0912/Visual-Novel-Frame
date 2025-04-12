@@ -11,10 +11,10 @@ namespace FSF.VNG
 {
     #region Data/Structures
     [Serializable]
-    public struct SingleAction
+    public class SingleAction
     {
-        public string name;
-        [TextArea(1, 15)] public string dialogue;
+        public string name = "Jenny";
+        [TextArea(1, 15)] public string dialogue = "Hello!";
         public AudioClip audio;
         public Sprite backGround;
         public AudioClip bg_Music;
@@ -43,10 +43,7 @@ namespace FSF.VNG
             this.branchOptions = branchOptions;
         }
     }
-    //
-    /// <summary>
-    /// will change to struct after build.(?
-    /// </summary>
+
     [Serializable]
     public class CharacterOption
     {
@@ -70,7 +67,7 @@ namespace FSF.VNG
         /// 采用列表顺序决定场景中的角色顺序。
         /// </para>
         /// </summary>
-        public bool ArrangeByListOrder = true;
+        public bool SortByListOrder = true;
 
         /// <summary>
         /// <para>
@@ -104,7 +101,7 @@ namespace FSF.VNG
             this.useOrigin = useOrigin;
             this.origin = origin;
             this.appointedPosition = appointedPosition;
-            this.ArrangeByListOrder = ArrangeByListOrder;
+            this.SortByListOrder = ArrangeByListOrder;
             this.CustomOrder = CustomOrder;
         }
     #else
@@ -151,6 +148,26 @@ namespace FSF.VNG
             this.returnIndex = returnIndex;
         }
     } 
+
+    [Serializable]
+    public struct EpisodeSymbol
+    {
+        public int Chapter;
+        public int Scene;
+
+        public EpisodeSymbol(int Chapter, int Scene)
+        {
+            this.Chapter = Chapter;
+            this.Scene = Scene;
+        }
+
+        public int this[int index] => index switch
+        {
+            0 => Chapter,
+            1 => Scene,
+            _ => throw new IndexOutOfRangeException()
+        };
+    }
     //
     #endregion
 
@@ -201,9 +218,11 @@ namespace FSF.VNG
 
 
 
-    [CreateAssetMenu(fileName = "DialogueProfile", menuName = "VNG/DialogueProfile", order = 30000)]
-    public sealed class DialogueProfile : ScriptableObject
+    //[CreateAssetMenu(fileName = "DialogueProfile", menuName = "VNG/DialogueProfile", order = 30000)]
+    [Serializable]
+    public sealed class DialogueProfile// : ScriptableObject
     {
+        public EpisodeSymbol episode = new EpisodeSymbol(1, 1);
         public SingleAction[] actions = Array.Empty<SingleAction>();
         public SingleAction this[int index]
         {

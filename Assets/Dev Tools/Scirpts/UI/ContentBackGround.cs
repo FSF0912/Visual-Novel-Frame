@@ -6,7 +6,6 @@ public class ContentBackGround : MonoBehaviour
 {
     public Text referText;
     public float SpacingX = 30f;
-    public float SpacingY = 20f;
     RectTransform self;
     void Start()
     {
@@ -16,6 +15,5 @@ public class ContentBackGround : MonoBehaviour
     void Update()
     {
         self.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, referText.preferredWidth + SpacingX);
-        self.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, referText.preferredHeight + SpacingY);
     }
 }

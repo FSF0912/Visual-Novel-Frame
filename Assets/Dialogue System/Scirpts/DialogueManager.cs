@@ -25,7 +25,7 @@ namespace FSF.VNG
         private int _currentIndex;
         public bool processingBranch = false;
         private BranchOption? currentBranchOption = null;
-        private Stack<int> returnIndexStack = new();
+        private int returnIndex;
 
         [HideInInspector] public bool AllowInput = true;
 
@@ -57,7 +57,7 @@ namespace FSF.VNG
 
             if (currentBranchOption.HasValue && _currentIndex > currentBranchOption.Value.endIndex)
             {
-                _currentIndex = returnIndexStack.Pop();
+                _currentIndex = returnIndex;
                 currentBranchOption = null;
                 ShowNextDialogue().Forget();
                 return;
@@ -70,7 +70,7 @@ namespace FSF.VNG
                 processingBranch = true;
                 var branchResult = currentAction.branchOptions[await BranchSelector.Instance.Branch(currentAction.branchOptions)];
                 currentBranchOption = branchResult;
-                returnIndexStack.Push(branchResult.returnIndex);
+                returnIndex = branchResult.returnIndex;
                 _currentIndex = branchResult.jumpIndex;
                 processingBranch = false;
                 ShowNextDialogue().Forget();
@@ -98,7 +98,7 @@ namespace FSF.VNG
         #else
                     character.Output(option.characterImage, null, false, option);
         #endif
-                    character.transform.SetSiblingIndex(option.ArrangeByListOrder ? order : option.CustomOrder);
+                    character.transform.SetSiblingIndex(option.SortByListOrder ? order : option.CustomOrder);
                     order++;
                 }
 

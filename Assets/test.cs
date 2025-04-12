@@ -6,16 +6,25 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using FSF.Collection;
+using System;
 
 public class test : MonoBehaviour
 {
     public string action;
     public string path = Path.Combine(Application.streamingAssetsPath, "test.a");
-    public string[] strings = Enumerable.Range(0, 300000).Select(i => i.ToString()).Select(i => i = "1").ToArray();
+    public string[] strings = new string[1];
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q)){
-            PopupMenu.Instance.Panel_Top("aa");
+            PopupMenu.Instance.CentralPanel("Test", "你好喵", 
+            ("Confirm",()=>{
+                Debug.Log("Confirm.");
+            }),
+
+            ("Cancel", ()=>{
+                Debug.Log("Cancel.");
+            })
+            );
         }
     }
 

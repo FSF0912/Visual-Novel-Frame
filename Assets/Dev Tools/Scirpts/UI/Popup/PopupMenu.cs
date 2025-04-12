@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using Cysharp.Threading.Tasks;
 
 namespace FSF.Collection
 {
@@ -13,102 +14,49 @@ namespace FSF.Collection
     };
     public class PopupMenu : MonoSingleton<PopupMenu>
     {
-        public CanvasScaler referredCanvas;
-        [Space]
-        public RectTransform TopNoticeHolder;
         public Text TopNoticeText;
+        public Animation Top_Animation;
         [Space]
-        public RectTransform central_NoticeHolder;
-        public RectTransform central_ButtonsHolder;
-        public CanvasGroup central_CanvasGroup;
+        public Text central_Title;
         public Text central_Text;
+        public Animation Central_Animation;
+        public string animName;
+        
         public GameObject button_Prefab;
-        [Space]
-        public float animationDuration = 0.3f;
-        public Ease ease = Ease.InCubic;
-        Sequence _top_Tween, _central_Tween;
-        Vector2 refer;
+        public RectTransform central_ButtonsHolder;
 
        //central
         protected override void OnAwake()
         {
-            if (referredCanvas == null)
+            if (Top_Animation.GetClipCount() > 1 || Central_Animation.GetClipCount() != 2)
             {
-                referredCanvas = GetComponentInParent<CanvasScaler>();
+                Debug.LogWarning("Multiple animation clip included.\nAnimations may not be played correctly.");
             }
-            refer = referredCanvas.referenceResolution;
         }
 
-        public void Panel_Top(string message)
+        public void TopPanel(string message)
         {
-            _top_Tween?.Kill();
-            TopNoticeHolder.position = new (refer.x + TopNoticeHolder.rect.width / 2, refer.y - TopNoticeHolder.rect.height / 2);
-            TopNoticeHolder.localScale = new (0.5f, 0.5f, 0.5f);
-
-            _top_Tween.Append(
-                TopNoticeHolder.DOMoveX(refer.x - TopNoticeHolder.rect.width / 2, animationDuration)
-                .SetEase(ease)
-            );
-
-            _top_Tween.Join(
-                TopNoticeHolder.DOScale(Vector3.one, animationDuration)
-                .SetEase(ease)
-            );
-
-            _top_Tween.OnComplete(()=> {
-                    _top_Tween.Join(
-                    TopNoticeHolder.DOMoveX(refer.x + TopNoticeHolder.rect.width / 2, animationDuration)
-                    .SetEase(ease)
-                );
-
-                _top_Tween.Join(
-                    TopNoticeHolder.DOScale(new Vector3(0.5f, 0.5f, 0.5f), animationDuration)
-                    .SetEase(ease)
-                );
-            });
-
+            Top_Animation.Stop();
             TopNoticeText.text = message;
+            Top_Animation.Play();
         }
 
-        public void Panel_Central(string message, ValueTuple<string, Action> action1)
+        public async UniTask TopPanelAsync(string message)
         {
-            _central_Tween?.Kill();
-
-            foreach (GameObject btn in central_ButtonsHolder.transform)
-            {
-                Destroy(btn);
-            }
-
-            var current = Instantiate(button_Prefab, central_ButtonsHolder).GetComponent<PopupButtonSingle>();
-            current.text.text = action1.Item1;
-            current.button.onClick.AddListener(()=> {
-                action1.Item2.Invoke();
-                });
-
-            LayoutRebuilder.ForceRebuildLayoutImmediate(central_ButtonsHolder);
-
-            central_CanvasGroup.alpha = 0;
-            central_NoticeHolder.localScale = new (0.4f, 0.4f, 0.4f); 
-            _central_Tween.Append(
-                central_CanvasGroup.DOFade(1, animationDuration)
-                .SetEase(ease)
-            );
-
-            _central_Tween.Join(
-                central_NoticeHolder.DOScale(Vector3.one, animationDuration)
-                .SetEase(ease)
-            );
-
-            central_Text.text = message;
+            Top_Animation.Stop();
+            TopNoticeText.text = message;
+            Top_Animation.Play();
+            await UniTask.WaitForSeconds(Top_Animation.clip.length);
         }
 
-        public void Panel_Central(string message, params ValueTuple<string, Action>[] actions)
+        public void CentralPanel(string title, string message, params ValueTuple<string, Action>[] actions)
         {
-            _central_Tween?.Kill();
-
-            foreach (GameObject btn in central_ButtonsHolder.transform)
+            if (central_ButtonsHolder.childCount > 0)
             {
-                Destroy(btn);
+                for (int i = central_ButtonsHolder.childCount - 1; i >= 0; i--)
+                {
+                    Destroy(central_ButtonsHolder.GetChild(i).gameObject);
+                }
             }
 
             foreach (var action in actions)
@@ -117,27 +65,19 @@ namespace FSF.Collection
                 current.text.text = action.Item1;
                 current.button.onClick.AddListener(()=> {
                 action.Item2.Invoke();
-                central_CanvasGroup.interactable = false;
-                //_central_Tween
+                Central_Animation.Stop();
+                Central_Animation[animName].time = Central_Animation[animName].length;
+                Central_Animation[animName].speed = -1;
+                Central_Animation.Play();
                 });
             }
-            
             LayoutRebuilder.ForceRebuildLayoutImmediate(central_ButtonsHolder);
 
-            central_CanvasGroup.alpha = 0;
-            central_CanvasGroup.interactable = true;
-            central_NoticeHolder.localScale = new (0.4f, 0.4f, 0.4f); 
-            _central_Tween.Append(
-                central_CanvasGroup.DOFade(1, animationDuration)
-                .SetEase(ease)
-            );
-
-            _central_Tween.Join(
-                central_NoticeHolder.DOScale(Vector3.one, animationDuration)
-                .SetEase(ease)
-            );
-
+            central_Title.text = title;
             central_Text.text = message;
+            Central_Animation.Stop();
+            Central_Animation[animName].speed = 1;
+            Central_Animation.Play();
         }
     }
 }
