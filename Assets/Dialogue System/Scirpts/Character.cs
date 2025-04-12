@@ -13,10 +13,11 @@ namespace FSF.VNG
         public CanvasRenderer char_Renderer1, char_Renderer2;
         public Image expression_Image1, expression_Image2;
         public CanvasRenderer expression_Renderer1, expression_Renderer2;
+        [HideInInspector] public bool isBuzy;
 
         RectTransform selfRTransform;
         Sequence _sequence;
-        bool isBuzy;
+
 
         bool char_isFirstImage;
         private float _char_mixWeight;
@@ -44,8 +45,6 @@ namespace FSF.VNG
         }
 
         #if VNG_EXPRESSION
-        private float _expressionFactor1, _expressionFactor2;
-
         bool expression_isFirstImage;
         private float _expression_mixWeight;
         public float expression_mixWeight
@@ -54,11 +53,6 @@ namespace FSF.VNG
             set
             {
                 _expression_mixWeight = value;
-                float clampedValue = Mathf.Clamp01(value);
-                
-                _expressionFactor1 = char_Renderer1.GetAlpha();
-                _expressionFactor2 = char_Renderer2.GetAlpha();
-                
                 expression_Renderer1.SetAlpha(Mathf.Min(value, char_Renderer1.GetAlpha()));
                 expression_Renderer2.SetAlpha(Mathf.Min(value, char_Renderer2.GetAlpha()));
             }

@@ -5,13 +5,20 @@ using FSF.Collection.Utilities;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using FSF.Collection;
 
 public class test : MonoBehaviour
 {
     public string action;
     public string path = Path.Combine(Application.streamingAssetsPath, "test.a");
     public string[] strings = Enumerable.Range(0, 300000).Select(i => i.ToString()).Select(i => i = "1").ToArray();
-    
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q)){
+            PopupMenu.Instance.Panel_Top("aa");
+        }
+    }
+
 }
 
 [CustomEditor(typeof(test))]

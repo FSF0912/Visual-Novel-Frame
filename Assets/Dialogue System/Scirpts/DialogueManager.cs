@@ -20,10 +20,10 @@ namespace FSF.VNG
         [SerializeField] private DialogueProfile _profile;
         [SerializeField] private KeyCode[] _activationKeys = 
         { KeyCode.Space, KeyCode.Return, KeyCode.F };
-        [SerializeField] private Dictionary<int, Character> _characterDisplays = new();
 
+        private Dictionary<int, Character> _characterDisplays = new();
         private int _currentIndex;
-        private bool processingBranch = false;
+        public bool processingBranch = false;
         private BranchOption? currentBranchOption = null;
         private Stack<int> returnIndexStack = new();
 

@@ -10,20 +10,20 @@ namespace FSF.VNG
         private bool _isAutoPlaying;
         private CancellationTokenSource _cts;
         private bool _wasProcessingLastFrame;
-
-        public bool IsAutoPlaying => _isAutoPlaying;
+        private DialogueManager dialogueManager;
 
         private void Start()
         {
             AutoPlayWaitTime = Dialogue_Configs.AutoPlayWaitTime;
             _isAutoPlaying = false;
+            dialogueManager = DialogueManager.Instance;
         }
 
         private void Update()
         {
             if (!_isAutoPlaying) return;
 
-            if (DialogueManager.Instance.InputReceived)
+            if (dialogueManager.InputReceived && !dialogueManager.processingBranch)
             {
                 ToggleAutoPlay(false);
             }

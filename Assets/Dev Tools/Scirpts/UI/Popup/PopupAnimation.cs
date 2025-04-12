@@ -7,7 +7,7 @@ using egl = UnityEditor.EditorGUILayout;
 
 namespace FSF.UI
 {
-    public class PopupInterface : MonoBehaviour
+    public class PopupAnimation : MonoBehaviour
     {
         public Vector2 Hide_Position = new(-1050, -600);
         public Canvas referredCanvas;
@@ -59,7 +59,7 @@ namespace FSF.UI
     }
 
     #if UNITY_EDITOR
-    [CustomEditor(typeof(PopupInterface))]
+    [CustomEditor(typeof(PopupAnimation))]
     [CanEditMultipleObjects]
     public class PopupInterfaceEditor : Editor
     {
@@ -75,7 +75,7 @@ namespace FSF.UI
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            var T = target as PopupInterface;
+            var T = target as PopupAnimation;
             if (T == null) return;
             serializedObject.Update();
             egl.PropertyField(T.customCurve ? curve : ease);
