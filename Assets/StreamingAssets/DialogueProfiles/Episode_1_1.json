@@ -1,0 +1,90 @@
+{
+  "episode": {
+    "Chapter": 1,
+    "Scene": 1
+  },
+  "actions": [
+    {
+      "name": "Namw",
+      "dialogue": "2111111",
+      "voiceIndex": "1",
+      "backGround": "111",
+      "Music": "Faded",
+      "environmentSettings": 1,
+      "characterOptions": [
+        {
+          "characterDefindID": 0,
+          "characterImage": "Stand",
+          "characterExpression": "Stand_Normal",
+          "presenceStatus": 1,
+          "motionMode": 1,
+          "action_Duration": 0.6,
+          "action_Ease": 0,
+          "SortByListOrder": false,
+          "CustomOrder": 0
+        },
+        {
+          "characterDefindID": 1,
+          "characterImage": "Stand",
+          "characterExpression": "Stand_Normal",
+          "presenceStatus": 1,
+          "motionMode": 2,
+          "action_Duration": 0.6,
+          "action_Ease": 0,
+          "SortByListOrder": false,
+          "CustomOrder": 0
+        }
+      ],
+      "isBranch": false,
+      "branchOptions": [
+        {
+          "BranchText": "",
+          "jumpIndex": 0,
+          "endIndex": 0,
+          "returnIndex": 0
+        }
+      ]
+    },
+    {
+      "name": "wwww",
+      "dialogue": "2111111",
+      "voiceIndex": "1",
+      "backGround": "222",
+      "Music": "Faded",
+      "environmentSettings": 1,
+      "characterOptions": [
+        {
+          "characterDefindID": 0,
+          "characterImage": "up",
+          "characterExpression": "_up",
+          "presenceStatus": 0,
+          "motionMode": 8,
+          "action_Duration": 0.0,
+          "action_Ease": 0,
+          "SortByListOrder": false,
+          "CustomOrder": 0
+        },
+        {
+          "characterDefindID": 1,
+          "characterImage": "up",
+          "characterExpression": "_up",
+          "presenceStatus": 0,
+          "motionMode": 9,
+          "action_Duration": 0.0,
+          "action_Ease": 0,
+          "SortByListOrder": false,
+          "CustomOrder": 0
+        }
+      ],
+      "isBranch": false,
+      "branchOptions": [
+        {
+          "BranchText": "",
+          "jumpIndex": 0,
+          "endIndex": 0,
+          "returnIndex": 0
+        }
+      ]
+    }
+  ]
+}

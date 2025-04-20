@@ -18,21 +18,20 @@ namespace FSF.Collection.Utilities
         /// <param name="path"></param>
         public static void SaveValue(object target, string path)
         {
-            string fullPath = Path.Combine(Application.persistentDataPath, path);
-            string directory = Path.GetDirectoryName(fullPath);
+            string directory = Path.GetDirectoryName(path);
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
 
-            if (File.Exists(fullPath))
+            if (File.Exists(path))
             {
-                File.Delete(fullPath);
+                File.Delete(path);
             }
 
-            string result = JsonConvert.SerializeObject(target);
-            File.WriteAllText(fullPath, result);
-            Debug.Log($"JSON saved to: {fullPath}");
+            string result = JsonConvert.SerializeObject(target, Formatting.Indented);
+            File.WriteAllText(path, result);
+            Debug.Log($"JSON saved to: {path}");
         }
 
         /// <summary>
@@ -44,13 +43,12 @@ namespace FSF.Collection.Utilities
         /// <exception cref="FileNotFoundException"></exception>
         public static T GetValue<T>(string path)
         {
-            string fullPath = Path.Combine(Application.persistentDataPath, path);
-            if (!File.Exists(fullPath))
+            if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"JSON file not found: {fullPath}");
+                throw new FileNotFoundException($"JSON file not found: {path}");
             }
 
-            string result = File.ReadAllText(fullPath);
+            string result = File.ReadAllText(path);
             return JsonConvert.DeserializeObject<T>(result);
         }
 
@@ -59,13 +57,12 @@ namespace FSF.Collection.Utilities
         /// </summary>
         public static async UniTask<T> GetValueAsync<T>(string path, CancellationToken token = default)
         {
-            string fullPath = Path.Combine(Application.persistentDataPath, path);
-            if (!File.Exists(fullPath))
+            if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"JSON file not found: {fullPath}");
+                throw new FileNotFoundException($"JSON file not found: {path}");
             }
 
-            string result = await File.ReadAllTextAsync(fullPath, token);
+            string result = await File.ReadAllTextAsync(path, token);
             return await UniTask.RunOnThreadPool(() => JsonConvert.DeserializeObject<T>(result));
         }
     }
@@ -79,24 +76,23 @@ namespace FSF.Collection.Utilities
         /// <param name="path"></param>
         public static void SaveValue<T>(T target, string path)
         {
-            string fullPath = Path.Combine(Application.persistentDataPath, path);
-            string directory = Path.GetDirectoryName(fullPath);
+            string directory = Path.GetDirectoryName(path);
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
 
-            if (File.Exists(fullPath))
+            if (File.Exists(path))
             {
-                File.Delete(fullPath);
+                File.Delete(path);
             }
 
-            using (var writer = new StreamWriter(fullPath, false))
+            using (var writer = new StreamWriter(path, false))
             {
                 var serializer = new XmlSerializer(typeof(T));
                 serializer.Serialize(writer, target);
             }
-            Debug.Log($"XML saved to: {fullPath}");
+            Debug.Log($"XML saved to: {path}");
         }
 
         /// <summary>
@@ -108,13 +104,12 @@ namespace FSF.Collection.Utilities
         /// <exception cref="FileNotFoundException"></exception>
         public static T GetValue<T>(string path)
         {
-            string fullPath = Path.Combine(Application.persistentDataPath, path);
-            if (!File.Exists(fullPath))
+            if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"XML file not found: {fullPath}");
+                throw new FileNotFoundException($"XML file not found: {path}");
             }
 
-            using (var reader = new StreamReader(fullPath))
+            using (var reader = new StreamReader(path))
             {
                 var serializer = new XmlSerializer(typeof(T));
                 return (T)serializer.Deserialize(reader);
@@ -126,13 +121,12 @@ namespace FSF.Collection.Utilities
         /// </summary>
         public static async UniTask<T> GetValueAsync<T>(string path, CancellationToken token = default)
         {
-            string fullPath = Path.Combine(Application.persistentDataPath, path);
-            if (!File.Exists(fullPath))
+            if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"XML file not found: {fullPath}");
+                throw new FileNotFoundException($"XML file not found: {path}");
             }
 
-            using var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
             using var reader = new StreamReader(stream);
             string xmlContent = await reader.ReadToEndAsync();
             return await UniTask.RunOnThreadPool(() => 
@@ -153,24 +147,23 @@ namespace FSF.Collection.Utilities
         /// <param name="path"></param>
         public static void SaveValue<T>(T target, string path)
         {
-            string fullPath = Path.Combine(Application.persistentDataPath, path);
-            string directory = Path.GetDirectoryName(fullPath);
+            string directory = Path.GetDirectoryName(path);
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
 
-            if (File.Exists(fullPath))
+            if (File.Exists(path))
             {
-                File.Delete(fullPath);
+                File.Delete(path);
             }
 
-            using (FileStream fs = new FileStream(fullPath, FileMode.Create))
+            using (FileStream fs = new FileStream(path, FileMode.Create))
             {
                 BinaryFormatter formatter = new BinaryFormatter();
                 formatter.Serialize(fs, target);
             }
-            Debug.Log($"Binary saved to: {fullPath}");
+            Debug.Log($"Binary saved to: {path}");
         }
 
         /// <summary>
@@ -182,13 +175,12 @@ namespace FSF.Collection.Utilities
         /// <exception cref="FileNotFoundException"></exception>
         public static T GetValue<T>(string path)
         {
-            string fullPath = Path.Combine(Application.persistentDataPath, path);
-            if (!File.Exists(fullPath))
+            if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"Binary file not found: {fullPath}");
+                throw new FileNotFoundException($"Binary file not found: {path}");
             }
 
-            using (FileStream fs = new FileStream(fullPath, FileMode.Open))
+            using (FileStream fs = new FileStream(path, FileMode.Open))
             {
                 BinaryFormatter formatter = new BinaryFormatter();
                 return (T)formatter.Deserialize(fs);
@@ -200,13 +192,12 @@ namespace FSF.Collection.Utilities
         /// </summary>
         public static async UniTask<T> GetValueAsync<T>(string path, CancellationToken token = default)
         {
-            string fullPath = Path.Combine(Application.persistentDataPath, path);
-            if (!File.Exists(fullPath))
+            if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"Binary file not found: {fullPath}");
+                throw new FileNotFoundException($"Binary file not found: {path}");
             }
 
-            using var fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+            using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
             byte[] buffer = ArrayPool<byte>.Shared.Rent((int)fs.Length);
             try
             {

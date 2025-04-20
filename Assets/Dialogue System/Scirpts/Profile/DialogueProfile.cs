@@ -2,6 +2,8 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
 using System;
+using Newtonsoft.Json;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -15,51 +17,29 @@ namespace FSF.VNG
     {
         public string name = "Jenny";
         [TextArea(1, 15)] public string dialogue = "Hello!";
-        public AudioClip audio;
-        public Sprite backGround;
-        public AudioClip bg_Music;
+        public string voiceIndex;
+        public string backGround;
+        public string Music;
         public EnvironmentSettings environmentSettings;
         public CharacterOption[] characterOptions;
         public bool isBranch;
         public BranchOption[] branchOptions;
 
-        public SingleAction(
-            string name, string dialogue, 
-
-        AudioClip audio, Sprite backGround, AudioClip bg_Music, 
-
-        EnvironmentSettings environmentSettings, CharacterOption[] characterOptions, 
-        bool isBranch, BranchOption[] branchOptions
-        )
-        {
-            this.name = name;
-            this.dialogue = dialogue;
-            this.audio = audio;
-            this.backGround = backGround;
-            this.bg_Music = bg_Music;
-            this.environmentSettings = environmentSettings;
-            this.characterOptions = characterOptions;
-            this.isBranch = isBranch;
-            this.branchOptions = branchOptions;
-        }
+        public SingleAction(){}
     }
 
     [Serializable]
     public class CharacterOption
     {
         public int characterDefindID;
-        public Sprite characterImage;
-    #if VNG_EXPRESSION
-        public Sprite characterExpression;
-    #endif
+        public string characterImage;
+        public string characterExpression;
         public CharacterPresenceStatus presenceStatus = CharacterPresenceStatus.None;
         public MotionPresents motionMode = MotionPresents.None;
         [Space(10f)]
         public float action_Duration = 0.6f;
         public Ease action_Ease = Ease.InOutSine;
-        [Header("Custom Options")]
-        public bool useOrigin = false;
-        public Vector2 origin = Vector2.zero;
+        [JsonIgnore]
         public Vector2 appointedPosition = Vector2.zero;
 
         /// <summary>
@@ -80,39 +60,15 @@ namespace FSF.VNG
         /// </summary>
         public int CustomOrder;
 
-    #if !VNG_EXPRESSION
+    
         public CharacterOption(
-            int characterDefindID, Sprite characterImage, 
+            int characterDefindID, string characterImage, string characterExpression,
 
             MotionPresents motionMode,
 
             float action_Duration, Ease action_Ease, 
 
-            bool useOrigin, Vector2 origin, Vector2 appointedPosition, 
-
-            bool ArrangeByListOrder, int CustomOrder
-        )
-        {
-            this.characterDefindID = characterDefindID;
-            this.characterImage = characterImage;
-            this.motionMode = motionMode;
-            this.action_Duration = action_Duration;
-            this.action_Ease = action_Ease;
-            this.useOrigin = useOrigin;
-            this.origin = origin;
-            this.appointedPosition = appointedPosition;
-            this.SortByListOrder = ArrangeByListOrder;
-            this.CustomOrder = CustomOrder;
-        }
-    #else
-        public CharacterOption(
-            int characterDefindID, Sprite characterImage, Sprite characterExpression,
-
-            MotionPresents motionMode,
-
-            float action_Duration, Ease action_Ease, 
-
-            bool useOrigin, Vector2 origin, Vector2 appointedPosition, 
+             Vector2 appointedPosition, 
 
             bool ArrangeByListOrder, int CustomOrder
         )
@@ -123,13 +79,10 @@ namespace FSF.VNG
             this.motionMode = motionMode;
             this.action_Duration = action_Duration;
             this.action_Ease = action_Ease;
-            this.useOrigin = useOrigin;
-            this.origin = origin;
             this.appointedPosition = appointedPosition;
-            this.ArrangeByListOrder = ArrangeByListOrder;
+            this.SortByListOrder = ArrangeByListOrder;
             this.CustomOrder = CustomOrder;
         }
-    #endif
     }
     //
     [Serializable]
@@ -224,6 +177,7 @@ namespace FSF.VNG
     {
         public EpisodeSymbol episode = new EpisodeSymbol(1, 1);
         public SingleAction[] actions = Array.Empty<SingleAction>();
+        [JsonIgnore]
         public SingleAction this[int index]
         {
             get
