@@ -34,17 +34,14 @@ namespace FSF.VNG
 
                 char_Renderer1.SetAlpha(_cachedClampValue);
                 char_Renderer2.SetAlpha(inverseValue);
-            #if VNG_EXPRESSION
                 if (UseExpression)
                 {
                     expression_Renderer1.SetAlpha(Mathf.Min(value, expression_Renderer1.GetAlpha()));
                     expression_Renderer2.SetAlpha(Mathf.Min(value, expression_Renderer2.GetAlpha()));
                 }
-            #endif
             }
         }
 
-        #if VNG_EXPRESSION
         bool expression_isFirstImage;
         private float _expression_mixWeight;
         public float expression_mixWeight
@@ -57,7 +54,6 @@ namespace FSF.VNG
                 expression_Renderer2.SetAlpha(Mathf.Min(value, char_Renderer2.GetAlpha()));
             }
         }
-        #endif
 
         private void Awake()
         {
@@ -88,7 +84,6 @@ namespace FSF.VNG
                         char_isFirstImage ? 0 : 1, Dialogue_Configs.characterTranslationTime));
                     char_isFirstImage = !char_isFirstImage;
                 }
-            #if VNG_EXPRESSION
                 if (UseExpression)
                 {
                     if (expression == null) return;
@@ -102,7 +97,6 @@ namespace FSF.VNG
                         expression_isFirstImage = !expression_isFirstImage;
                     }
                 }
-            #endif
                 CharacterMovement();
             }
             else
@@ -179,10 +173,6 @@ namespace FSF.VNG
                     case MotionPresents.ToRight:
                         MoveToAppointedPosition(new(500, 0));
                         break;
-
-                    case MotionPresents.Custom when option.useOrigin:
-                        selfRTransform.anchoredPosition = option.origin;
-                        goto default;
 
                     case MotionPresents.Custom:
                         _sequence.Join(selfRTransform.DOAnchorPos(option.appointedPosition, 

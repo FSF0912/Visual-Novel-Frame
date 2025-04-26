@@ -11,30 +11,34 @@ namespace FSF.VNG
 {
     public class DialogueManager : MonoSingleton<DialogueManager>
     {
-        [Header("Variables")]
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
+        [Header("UI References")]
         [SerializeField] private GameObject _imageSwitcherPrefab;
         [Space(5.0f)]
         [SerializeField] private RectTransform _charactersHolder;
         [SerializeField] private Character _background;
-        [Header("Settings")]
-        [SerializeField] private DialogueProfile _profile;
+        [Header("Game Configuration")]
+        public GameDefinitionAsset GameDefinition;
         [SerializeField] private KeyCode[] _activationKeys = 
         { KeyCode.Space, KeyCode.Return, KeyCode.F };
 
+        private DialogueProfile _currentProfile;
         private Dictionary<int, Character> _characterDisplays = new();
         private int _currentIndex;
-        public bool processingBranch = false;
+        [HideInInspector] public bool processingBranch = false;
         private BranchOption? currentBranchOption = null;
-        private Stack<int> returnIndexStack = new();
+        private int returnIndex;
 
         [HideInInspector] public bool AllowInput = true;
 
         public bool InputReceived => 
             AllowInput && 
-            (Input.GetMouseButtonDown(0) || _activationKeys.Any(Input.GetKeyDown));
+            (Input.GetMouseButtonDown(0) || _activationKeys.Any(a => Input.GetKeyDown(a)));
 
         private void Start()
         {
+            _currentProfile = ProfileManager.LoadProfile(new EpisodeSymbol(1, 1));
             ShowNextDialogue().Forget();
         }
 
@@ -48,72 +52,80 @@ namespace FSF.VNG
 
         public async UniTask ShowNextDialogue()
         {
-            if (processingBranch) return; 
-            if (_profile == null || _currentIndex >= _profile.actions.Length)
+            await _semaphore.WaitAsync();
+            try
             {
-                Debug.Log("对话结束");
-                return;
-            }
-
-            if (currentBranchOption.HasValue && _currentIndex > currentBranchOption.Value.endIndex)
-            {
-                _currentIndex = returnIndexStack.Pop();
-                currentBranchOption = null;
-                ShowNextDialogue().Forget();
-                return;
-            }
-
-            var currentAction = _profile.actions[_currentIndex];
-
-            if (currentAction.isBranch)
-            {
-                processingBranch = true;
-                var branchResult = currentAction.branchOptions[await BranchSelector.Instance.Branch(currentAction.branchOptions)];
-                currentBranchOption = branchResult;
-                returnIndexStack.Push(branchResult.returnIndex);
-                _currentIndex = branchResult.jumpIndex;
-                processingBranch = false;
-                ShowNextDialogue().Forget();
-                return;
-            }
-
-            if (TypeWriter.Instance.OutputText(currentAction.name, currentAction.dialogue))
-            {
-                int order = 0;
-                foreach (var option in currentAction.characterOptions)
+                if (processingBranch) return; 
+                if (_currentProfile == null || _currentIndex >= _currentProfile.actions.Length)
                 {
-                    if (!_characterDisplays.TryGetValue(option.characterDefindID, out var character))
+                    Debug.Log("对话结束");
+                    return;
+                }
+
+                if (currentBranchOption.HasValue && _currentIndex > currentBranchOption.Value.endIndex)
+                {
+                    _currentIndex = returnIndex;
+                    currentBranchOption = null;
+                    _semaphore.Release();
+                    await ShowNextDialogue();
+                    return;
+                }
+
+                var currentAction = _currentProfile.actions[_currentIndex];
+
+                if (currentAction.isBranch)
+                {
+                    processingBranch = true;
+                    var branchResult = currentAction.branchOptions[await BranchSelector.Instance.Branch(currentAction.branchOptions)];
+                    currentBranchOption = branchResult;
+                    returnIndex = branchResult.returnIndex;
+                    _currentIndex = branchResult.jumpIndex;
+                    processingBranch = false;
+                    _semaphore.Release();
+                    await ShowNextDialogue();
+                    return;
+                }
+
+                if (TypeWriter.Instance.OutputText(currentAction.name, currentAction.dialogue))
+                {
+                    int order = 0;
+                    foreach (var option in currentAction.characterOptions)
                     {
-                        character = Instantiate(_imageSwitcherPrefab, _charactersHolder).GetComponent<Character>();
-                        character.characterDefindID = option.characterDefindID;
-                        character.name = $"Character_{option.characterDefindID}";
-                        var rt = character.transform as RectTransform;
-                        rt.anchoredPosition = new Vector2(-2000, -1500);
-                        rt.sizeDelta = new Vector2(0, 1100);
-                        _characterDisplays.Add(option.characterDefindID, character);
+                        if (!_characterDisplays.TryGetValue(option.characterDefindID, out var character))
+                        {
+                            character = Instantiate(_imageSwitcherPrefab, _charactersHolder).GetComponent<Character>();
+                            character.characterDefindID = option.characterDefindID;
+                            character.name = $"Character_{option.characterDefindID}";
+                            //var rt = character.transform as RectTransform;
+                            //rt.anchoredPosition = new Vector2(-2000, -1500);
+                            //rt.sizeDelta = new Vector2(0, 1100);
+                            _characterDisplays.Add(option.characterDefindID, character);
+                        }
+                        print(GameDefinition == null);
+                        var charparams = GameDefinition.GetPortraitAndExpression(
+                            option.characterDefindID, option.characterImage, option.characterExpression);
+                        character.Output(charparams.Item1, charparams.Item2, false, option);
+                        character.transform.SetSiblingIndex(option.SortByListOrder ? order : option.CustomOrder);
+                        order++;
                     }
 
-        #if VNG_EXPRESSION
-                    character.Output(option.characterImage, option.characterExpression, false, option);
-        #else
-                    character.Output(option.characterImage, null, false, option);
-        #endif
-                    character.transform.SetSiblingIndex(option.ArrangeByListOrder ? order : option.CustomOrder);
-                    order++;
+                    _background.Output(GameDefinition.GetBackGround(currentAction.backGround));
+                    AudioManager.Instance.PlayAudio(null, GameDefinition.GetAudio(currentAction.Music));
+                    _currentIndex++;
                 }
-
-                _background.Output(currentAction.backGround);
-                AudioManager.Instance.PlayAudio(currentAction.audio, currentAction.bg_Music);
-                _currentIndex++;
-            }
-            else
-            {
-                foreach (var display in _characterDisplays) display.Value.Interrupt();
-                _background.Interrupt();
-                if (Dialogue_Configs.InterruptVoicePlayback)
+                else
                 {
-                    AudioManager.Instance.InterruptAudio();
+                    foreach (var display in _characterDisplays) display.Value.Interrupt();
+                    _background.Interrupt();
+                    if (Dialogue_Configs.InterruptVoicePlayback)
+                    {
+                        AudioManager.Instance.InterruptAudio();
+                    }
                 }
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
